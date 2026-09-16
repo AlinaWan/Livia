@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media;
 
-namespace Common;
+namespace Common.Theme;
 
 public sealed class CommonTheme
 {

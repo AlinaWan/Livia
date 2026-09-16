@@ -1,6 +1,7 @@
 ﻿using System.Windows;
+using Common.Theme;
 
-namespace Common;
+namespace Common.Windows;
 
 public sealed class CommonWindowOptions
 {

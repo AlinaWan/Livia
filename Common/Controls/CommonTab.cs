@@ -3,8 +3,9 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using Common.Theme;
 
-namespace Common;
+namespace Common.Controls;
 
 public static class CommonTab
 {

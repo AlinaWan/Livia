@@ -5,8 +5,11 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
+using Common.Theme;
+using Common.Controls;
+using Common.Native;
 
-namespace Common;
+namespace Common.Windows;
 
 public class CommonWindow : Window
 {

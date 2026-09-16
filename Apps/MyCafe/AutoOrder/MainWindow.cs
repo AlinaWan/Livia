@@ -10,6 +10,9 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using Common;
+using Common.Windows;
+using Common.Controls;
+using Common.Theme;
 using WindowsInput;
 using WindowsInput.Native;
 
@@ -54,6 +57,7 @@ public sealed class MainWindow : CommonWindow
     private int _pressDelay = 100;
 
     private CancellationTokenSource? _cts;
+    private WindowFocusMonitor? _focusMonitor;
     private bool _isRunning;
 
     // -------------------------------------------------------------------------
@@ -148,6 +152,10 @@ public sealed class MainWindow : CommonWindow
     {
         base.OnSourceInitialized(e);
 
+        _focusMonitor = new WindowFocusMonitor("RobloxPlayerBeta.exe");
+        _focusMonitor.Unfocused += OnTargetWindowUnfocused;
+        _focusMonitor.Start();
+
         var helper = new WindowInteropHelper(this);
         var source = HwndSource.FromHwnd(helper.Handle);
 
@@ -165,6 +173,12 @@ public sealed class MainWindow : CommonWindow
 
     protected override void OnClosed(EventArgs e)
     {
+        if (_focusMonitor != null)
+        {
+            _focusMonitor.Unfocused -= OnTargetWindowUnfocused;
+            _focusMonitor.Dispose();
+        }
+
         var helper = new WindowInteropHelper(this);
 
         UnregisterHotKey(
@@ -569,6 +583,22 @@ public sealed class MainWindow : CommonWindow
     }
 
     // -------------------------------------------------------------------------
+    // Event Handlers
+    // -------------------------------------------------------------------------
+
+    private void OnTargetWindowUnfocused(object? sender, EventArgs e)
+    {
+        Dispatcher.InvokeAsync(() =>
+        {
+            if (_isRunning)
+            {
+                Log("Roblox focus lost. Suspending macro.");
+                _cts?.Cancel();
+            }
+        });
+    }
+
+    // -------------------------------------------------------------------------
     // Macro Control
     // -------------------------------------------------------------------------
 
@@ -577,6 +607,12 @@ public sealed class MainWindow : CommonWindow
         if (_isRunning)
         {
             _cts?.Cancel();
+            return;
+        }
+
+        if (_focusMonitor != null && !_focusMonitor.IsFocused)
+        {
+            Log("Roblox is not focused. Cannot start macro.");
             return;
         }
 

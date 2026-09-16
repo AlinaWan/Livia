@@ -1,8 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Common.Theme;
 
-namespace Common;
+namespace Common.Controls;
 
 public sealed class CommonStatusBar : Border
 {

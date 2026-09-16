@@ -3,8 +3,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using Common.Theme;
 
-namespace Common;
+namespace Common.Controls;
 
 public static class CommonControls
 {

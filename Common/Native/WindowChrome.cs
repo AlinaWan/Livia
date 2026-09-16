@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using System.Windows.Media;
 
-namespace Common;
+namespace Common.Native;
 
 internal static class WindowChrome
 {

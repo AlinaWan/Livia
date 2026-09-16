@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Common/Common.csproj" Id="99b8123d-794e-4cf7-bdc7-b32a9d30619b" />
+  <Project Path="Apps/MyCafe/AutoOrder/AutoOrder.csproj" Id="3eb6977e-0efa-424c-9924-9bf474902d3a" />
+</Solution>

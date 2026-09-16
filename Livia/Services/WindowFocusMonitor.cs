@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using Common.Native;
+using Livia.Native;
 
-namespace Common.Windows;
+namespace Livia.Services;
 
 public sealed class WindowFocusMonitor : IDisposable
 {

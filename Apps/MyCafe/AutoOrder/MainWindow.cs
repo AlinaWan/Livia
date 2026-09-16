@@ -9,12 +9,11 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
-using Common;
-using Common.Windows;
-using Common.Controls;
-using Common.Theme;
+using Livia;
+using Livia.UI;
 using WindowsInput;
 using WindowsInput.Native;
+using Livia.Services;
 
 namespace AutoOrder;
 

@@ -1,7 +1,6 @@
 ﻿using System.Windows;
-using Common.Theme;
 
-namespace Common.Windows;
+namespace Livia.UI;
 
 public sealed class CommonWindowOptions
 {

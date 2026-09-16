@@ -7,12 +7,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <ApplicationIcon>..\..\..\Common\Assets\KaarinaaIcon.ico</ApplicationIcon>
+    <AssemblyVersion>1.1.1.0</AssemblyVersion>
+    <ApplicationIcon>..\..\..\Livia\Assets\KaarinaaIcon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\Common.csproj" />
+    <ProjectReference Include="..\..\..\Livia\Livia.csproj" />
   </ItemGroup>
 
   <ItemGroup>

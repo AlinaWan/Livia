@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media;
 
-namespace Common.Theme;
+namespace Livia.UI;
 
 public sealed class CommonTheme
 {

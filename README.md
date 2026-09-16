@@ -1,27 +1,37 @@
 <div align="center">
   <h1>Livia</h1>
+  <p><i>"Magnus ab integro saeclorum nascitur ordo" —Virgil, Eclogue IV (c. 40 BCE)</i></p>
 
 [![License](https://img.shields.io/github/license/AlinaWan/DiscordRPCClient)](LICENSE)
 [![C#](https://custom-icon-badges.demolab.com/badge/C%23-%23239120.svg?logo=cshrp&logoColor=white)](#)
 [![.NET](https://img.shields.io/badge/.NET-512BD4?logo=dotnet&logoColor=fff)](#)
 [![Windows](https://custom-icon-badges.demolab.com/badge/For%20Windows-0078D6?logo=windows11&logoColor=white)](#)
 
-A collection of Roblox automation macros built on a shared common library.
+An open-source library for building Roblox automation macros in C#,
+with a collection of prebuilt macros built on its API.
+
 </div>
 
 ## Prerequisites
 
 * [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 
-## Usage
+## Build Your Own Macro
 
-Run any macro project directly using the .NET CLI:
+Livia can be added to an existing console application project by adding a reference:
+```powershell
+dotnet add <YourProject> reference Livia/Livia.csproj
+```
+
+## Prebuilt Macros
+
+Run any official Livia macro project directly using the .NET CLI:
 
 ```powershell
 dotnet run --project Apps/<Experience>/<Macro>
 ```
 
-## Supported Experiences
+### Supported Experiences
 
 <div align="center">
 

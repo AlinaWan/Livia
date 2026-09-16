@@ -5,11 +5,9 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
-using Common.Theme;
-using Common.Controls;
-using Common.Native;
+using Livia.Native;
 
-namespace Common.Windows;
+namespace Livia.UI;
 
 public class CommonWindow : Window
 {
@@ -50,9 +48,28 @@ public class CommonWindow : Window
     {
         base.OnSourceInitialized(e);
 
-        WindowChrome.SetTitleBarColor(
+        SetTitleBarColor(
             new WindowInteropHelper(this),
             Theme.TitleBar);
+    }
+
+    public static void SetTitleBarColor(
+        WindowInteropHelper window,
+        Color color)
+    {
+        IntPtr hwnd = window.EnsureHandle();
+
+        int bgrColor =
+            (color.B << 16) |
+            (color.G << 8) |
+            color.R;
+
+        // Delegates P/Invoke execution to Common.Native
+        DwmApi.DwmSetWindowAttribute(
+            hwnd,
+            DwmApi.DWMWA_CAPTION_COLOR,
+            ref bgrColor,
+            sizeof(int));
     }
 
     private static string GetAppVersion()

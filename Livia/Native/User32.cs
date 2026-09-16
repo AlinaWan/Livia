@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Common.Native;
+namespace Livia.Native;
 
 internal static class User32
 {

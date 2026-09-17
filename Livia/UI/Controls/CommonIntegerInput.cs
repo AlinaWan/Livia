@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace Livia.UI;
 
-public static class CommonInput
+public static class CommonIntegerInput
 {
     private static ControlTemplate CreateTemplate()
     {

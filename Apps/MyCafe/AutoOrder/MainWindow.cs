@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -10,10 +11,10 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using Livia;
-using Livia.UI;
-using Livia.UI.Controls;
 using Livia.Services;
 using Livia.Services.Input;
+using Livia.UI;
+using Livia.UI.Controls;
 
 namespace AutoOrder;
 
@@ -55,10 +56,14 @@ public sealed class MainWindow : CommonWindow
     private int _loopCount = 10;
     private int _pressDelay = 100;
     private bool _stopOnUnfocus = true;
+    private bool _rejoinOnDisconnect = false;
+    private string _rejoinUrl = "";
 
     private CancellationTokenSource? _cts;
     private WindowFocusMonitor? _focusMonitor;
+    private RobloxLogMonitor? _logMonitor;
     private bool _isRunning;
+    private bool _isRejoining;
 
     // -------------------------------------------------------------------------
     // Application UI
@@ -90,7 +95,7 @@ public sealed class MainWindow : CommonWindow
             Author = "by angelina",
 
             Width = 420,
-            Height = 410,
+            Height = 460,
             Topmost = true,
 
             Theme = new CommonTheme
@@ -155,6 +160,12 @@ public sealed class MainWindow : CommonWindow
         _focusMonitor = new WindowFocusMonitor("RobloxPlayerBeta.exe");
         _focusMonitor.Unfocused += OnTargetWindowUnfocused;
         _focusMonitor.Start();
+
+        _logMonitor = new RobloxLogMonitor();
+        _logMonitor.Start(new Dictionary<string, Action<Match>>
+        {
+            [@"\[FLog::Network\] Time to disconnect replication data: ([\d.]+)"] = OnRobloxDisconnected
+        });
 
         var helper = new WindowInteropHelper(this);
         var source = HwndSource.FromHwnd(helper.Handle);
@@ -309,7 +320,7 @@ public sealed class MainWindow : CommonWindow
         });
 
         stack.Children.Add(
-            CommonInput.CreateRow(
+            CommonIntegerInput.CreateRow(
                 "Item Count:",
                 _loopCount,
                 value =>
@@ -321,7 +332,7 @@ public sealed class MainWindow : CommonWindow
                 validator: val => val > 0));
 
         stack.Children.Add(
-            CommonInput.CreateRow(
+            CommonIntegerInput.CreateRow(
                 "Press Delay (ms):",
                 _pressDelay,
                 value =>
@@ -339,6 +350,28 @@ public sealed class MainWindow : CommonWindow
                 {
                     _stopOnUnfocus = isEnabled;
                     Log($"Stop on unfocus: {_stopOnUnfocus}");
+                },
+                Theme));
+
+        stack.Children.Add(
+            CommonSegmentedToggle.CreateRow(
+                "Rejoin on Disconnect:",
+                _rejoinOnDisconnect,
+                isEnabled =>
+                {
+                    _rejoinOnDisconnect = isEnabled;
+                    Log($"Rejoin on disconnect: {_rejoinOnDisconnect}");
+                },
+                Theme));
+
+        stack.Children.Add(
+            CommonStringInput.CreateRow(
+                "Rejoin URL:",
+                _rejoinUrl,
+                value =>
+                {
+                    _rejoinUrl = value;
+                    Log($"Rejoin URL set to: {_rejoinUrl}");
                 },
                 Theme));
 
@@ -599,12 +632,160 @@ public sealed class MainWindow : CommonWindow
     {
         Dispatcher.InvokeAsync(() =>
         {
-            if (_stopOnUnfocus && _isRunning)
+            // Do NOT stop if we are currently executing the rejoin sequence
+            if (_stopOnUnfocus && _isRunning && !_isRejoining)
             {
                 Log("Roblox focus lost. Suspending macro.");
                 _cts?.Cancel();
             }
         });
+    }
+    private void OnRobloxDisconnected(Match match)
+    {
+        Dispatcher.InvokeAsync(async () =>
+        {
+            if (!_isRunning || _isRejoining)
+                return;
+
+            // Set flag immediately
+            _isRejoining = true;
+
+            Log("Disconnect detected.");
+
+            if (_rejoinOnDisconnect)
+            {
+                _cts?.Cancel();
+                _cts = new CancellationTokenSource();
+
+                await HandleRejoinAsync(_cts.Token);
+            }
+            else
+            {
+                _isRejoining = false;
+                _cts?.Cancel();
+            }
+        });
+    }
+
+    private async Task HandleRejoinAsync(CancellationToken token)
+    {
+        _isRejoining = true;
+        SetStatus("Status: Reconnecting to Roblox...", Theme.Warning);
+        Log("Initiating auto-rejoin...");
+
+        try
+        {
+            // Capture existing PID (if any) to detect when a NEW process starts
+            int oldPid = GetRobloxProcessId();
+
+            // Open rejoin link in browser (triggers Roblox launcher)
+            string rejoinUrl = _rejoinUrl;
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = rejoinUrl,
+                UseShellExecute = true
+            });
+
+            Log("Waiting for Roblox process to reload...");
+
+            // Poll until a new process ID appears with an active main window
+            Process? newProcess = null;
+            while (newProcess == null)
+            {
+                await Task.Delay(1000, token);
+
+                var process = Process.GetProcessesByName("RobloxPlayerBeta").FirstOrDefault();
+                if (process != null && process.Id != oldPid)
+                {
+                    process.Refresh();
+                    if (process.MainWindowHandle != IntPtr.Zero)
+                    {
+                        newProcess = process;
+                    }
+                }
+            }
+
+            Log($"New Roblox instance detected (PID: {newProcess.Id}). Waiting for game load...");
+
+            // Give Roblox time to load into the map/UI
+            await Task.Delay(20000, token);
+
+            Log("Rejoin completed successfully. Restarting macro.");
+
+            // This will skip the loading screen if it still hasn't loaded after the wait
+            _inputSim.Mouse.MoveMouseToPositionOnVirtualDesktop(32767, 32767);
+            _inputSim.Mouse.MoveMouseBy(1, 1);
+            _inputSim.Mouse.LeftClick();
+
+            // Enable UI navigation mode (press '\')
+            _inputSim.Keyboard.KeyPress(VirtualKeys.OEM5);
+
+            // Now we need to navigate to the main menu and re-enter the order tab.
+            // At this point we should be on the top right button row on the very rightmost button
+            for (int i = 0; i < 25; i++)
+            {
+                _inputSim.Keyboard.KeyPress(VirtualKeys.Up);
+                await Task.Delay(1, token);
+
+                _inputSim.Keyboard.KeyPress(VirtualKeys.Right);
+                await Task.Delay(1, token);
+            }
+            await Task.Delay(_pressDelay, token);
+
+            // Move to the main menu button on to top middle button row
+            for (int i = 0; i < 4; i++)
+            {
+                _inputSim.Keyboard.KeyPress(VirtualKeys.Left);
+                await Task.Delay(_pressDelay, token);
+            }
+
+            // Enter main menu
+            _inputSim.Keyboard.KeyPress(VirtualKeys.Return);
+            await Task.Delay(_pressDelay, token);
+
+            // Navigate to the order tab (2nd button in the left button row)
+            _inputSim.Keyboard.KeyPress(VirtualKeys.Down);
+            await Task.Delay(_pressDelay, token);
+
+            _inputSim.Keyboard.KeyPress(VirtualKeys.Left);
+            await Task.Delay(_pressDelay, token);
+
+            for (int i = 0; i < 2; i++)
+            {
+                _inputSim.Keyboard.KeyPress(VirtualKeys.Down);
+                await Task.Delay(_pressDelay, token);
+            }
+
+            _inputSim.Keyboard.KeyPress(VirtualKeys.Return);
+            await Task.Delay(_pressDelay, token);
+
+            // Reset state flags and restart macro execution
+            _isRejoining = false;
+            _isRunning = false; // Reset flag so ToggleMacro can start clean
+
+            ToggleMacro();
+        }
+        catch (OperationCanceledException)
+        {
+            Log("Rejoin cancelled.");
+            _isRejoining = false;
+            _isRunning = false;
+            SetStatus("F6: Start/Stop | Status: Suspended", Color.FromRgb(50, 50, 50));
+        }
+        catch (Exception ex)
+        {
+            Log($"Rejoin failed: {ex.Message}");
+            _isRejoining = false;
+            _isRunning = false;
+
+            SetStatus("Status: Rejoin Failed", Theme.Error);
+        }
+    }
+
+    private int GetRobloxProcessId()
+    {
+        var proc = Process.GetProcessesByName("RobloxPlayerBeta").FirstOrDefault();
+        return proc?.Id ?? 0;
     }
 
     // -------------------------------------------------------------------------
@@ -619,33 +800,35 @@ public sealed class MainWindow : CommonWindow
             return;
         }
 
-        if (_stopOnUnfocus && _focusMonitor != null && !_focusMonitor.IsFocused)
+        if (_stopOnUnfocus && _focusMonitor != null && !_focusMonitor.IsFocused && !_isRejoining)
         {
             Log("Roblox is not focused. Cannot start macro.");
             return;
         }
 
         _isRunning = true;
-
         _cts = new CancellationTokenSource();
 
-        SetStatus(
-            "F6: Start/Stop | Status: Running",
-            Theme.Success);
-
+        SetStatus("F6: Start/Stop | Status: Running", Theme.Success);
         Log("Started");
 
-        _ = Task.Run(
-            () => DoWorkAsync(_cts.Token));
+        _ = Task.Run(() => DoWorkAsync(_cts.Token));
     }
 
-    private async Task DoWorkAsync(
-        CancellationToken token)
+    private async Task DoWorkAsync(CancellationToken token)
     {
         try
         {
             while (!token.IsCancellationRequested)
             {
+                // Return UI navigation position.
+                // We should be at any of the top 3 buttons in the top middle button row.
+                for (int i = 0; i < 50; i++)
+                {
+                    _inputSim.Keyboard.KeyPress(VirtualKeys.Up);
+                    await Task.Delay(1, token);
+                }
+
                 // Center mouse using normalized absolute screen coordinates (0 to 65535).
                 _inputSim.Mouse.MoveMouseToPositionOnVirtualDesktop(32767, 32767);
 
@@ -653,64 +836,43 @@ public sealed class MainWindow : CommonWindow
                 _inputSim.Mouse.MoveMouseBy(1, 1);
 
                 // Return order listbox (Scroll up).
-                for (int i = 0;
-                     i < _loopCount * 2;
-                     i++)
+                for (int i = 0; i < _loopCount * 2; i++)
                 {
-                    // 1 click up corresponds to a delta of 120 (1 unit in InputSimulator).
                     _inputSim.Mouse.VerticalScroll(1);
-
-                    await Task.Delay(
-                        3,
-                        token);
+                    await Task.Delay(3, token);
                 }
 
-                await Task.Delay(
-                    _pressDelay,
-                    token);
+                await Task.Delay(_pressDelay, token);
 
-                // Return UI navigation position.
-                // This should return the highlighter to either of the 3 buttons on the top dock.
-                for (int i = 0; i < 50; i++)
+                // Navigate back to the top middle button row
+                // If it highlights any of the top 3, it's fine
+                for (int i = 0; i < 10; i++)
                 {
                     _inputSim.Keyboard.KeyPress(VirtualKeys.Up);
-
-                    await Task.Delay(
-                        1,
-                        token);
+                    await Task.Delay(1, token);
                 }
+                await Task.Delay(_pressDelay, token);
 
-                // Move to order listbox.
-                // This should move the highlighter to either the Drinks or Toppings button immediately above the listbox.
-                // At this point the next 2 down movements should move the highligher to the first item.
+                // Navigate down to the menu
+                // This should highlight either the Drinks or Toppings button
+                // The next 2 down presses will highlight the first item in the list
                 _inputSim.Keyboard.KeyPress(VirtualKeys.Down);
-
-                await Task.Delay(
-                    _pressDelay,
-                    token);
+                await Task.Delay(1, token);
 
                 // Main execution loop.
-                for (int i = 0;
-                     i < _loopCount;
-                     i++)
+                for (int i = 0; i < _loopCount; i++)
                 {
                     for (int d = 0; d < 2; d++)
                     {
                         _inputSim.Keyboard.KeyPress(VirtualKeys.Down);
-
-                        await Task.Delay(
-                            _pressDelay,
-                            token);
+                        await Task.Delay(_pressDelay, token);
                     }
 
                     // Purchase this item.
                     for (int e = 0; e < 10; e++)
                     {
                         _inputSim.Keyboard.KeyPress(VirtualKeys.Return);
-
-                        await Task.Delay(
-                            1,
-                            token);
+                        await Task.Delay(1, token);
                     }
                 }
             }
@@ -721,16 +883,26 @@ public sealed class MainWindow : CommonWindow
         }
         finally
         {
-            _isRunning = false;
-
-            await Dispatcher.InvokeAsync(() =>
+            // Only update "Stopped" UI state if we are not actively rejoining
+            if (!_isRejoining)
             {
-                SetStatus(
-                    "F6: Start/Stop | Status: Suspended",
-                    Color.FromRgb(50, 50, 50));
+                _isRunning = false;
 
-                Log("Stopped");
-            });
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    SetStatus(
+                        "F6: Start/Stop | Status: Suspended",
+                        Color.FromRgb(50, 50, 50));
+
+                    Log("Stopped");
+                });
+            }
         }
+    }
+
+    // Call on Window Closing / Shutdown
+    public void Cleanup()
+    {
+        _logMonitor?.Dispose();
     }
 }

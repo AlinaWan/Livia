@@ -38,7 +38,8 @@ Livia provides an easy-to-use API for creating automation macros. The following 
 | API                                    | Description                                        |
 | :------------------------------------- | -------------------------------------------------- |
 | `CommonTab.Create(...)`                | Creates a new tab in the UI.                       |
-| `CommonInput.CreateRow(...)`           | Creates a new row with an input box.               |
+| `CommonIntegerInput.CreateRow(...)`    | Creates a new row with an integer input box.       |
+| `CommonStringInput.CreateRow(...)`     | Creates a new row with a string input box.         |
 | `CommonToggle.CreateRow(...)`          | Creates a new row with a toggle switch.            |
 | `CommonSegmentedToggle.CreateRow(...)` | Creates a new row with a segmented toggle switch.  |
 | `CommonHelpStep.Create(...)`           | Creates a new help step with a number and content. |
@@ -63,6 +64,16 @@ Livia provides an easy-to-use API for creating automation macros. The following 
 | `VirtualKeys`                                    | An enumeration of key names and their corresponding virtual key codes. |
 
 </details>
+
+### Services
+
+<details>
+  <summary>Click to expand</summary>
+
+| API                  | Description                                                                   |
+| :------------------- | ----------------------------------------------------------------------------- |
+| `WindowFocusMonitor` | Monitors a process by executable name and raises an event on focus change.    |
+| `RobloxLogMonitor`   | Monitors the Roblox log file by a regex pattern and raises an event on match. |
 
 ## Prebuilt Macros
 

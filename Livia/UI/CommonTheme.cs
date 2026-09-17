@@ -100,6 +100,12 @@ public sealed class CommonTheme
     } =
         Color.FromRgb(40, 90, 50);
 
+    public Color Warning
+    {
+        get; init;
+    } =
+        Color.FromRgb(180, 120, 40);
+
     public Color Error
     {
         get; init;

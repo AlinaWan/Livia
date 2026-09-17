@@ -11,6 +11,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using Livia;
 using Livia.UI;
+using Livia.UI.Controls;
 using Livia.Services;
 using Livia.Services.Input;
 
@@ -53,6 +54,7 @@ public sealed class MainWindow : CommonWindow
 
     private int _loopCount = 10;
     private int _pressDelay = 100;
+    private bool _stopOnUnfocus = true;
 
     private CancellationTokenSource? _cts;
     private WindowFocusMonitor? _focusMonitor;
@@ -302,15 +304,12 @@ public sealed class MainWindow : CommonWindow
             Text = "CONFIGURATION",
             FontSize = 10,
             FontWeight = FontWeights.SemiBold,
-
-            Foreground = new SolidColorBrush(
-                Theme.MutedText),
-
+            Foreground = new SolidColorBrush(Theme.MutedText),
             Margin = new Thickness(0, 5, 0, 15)
         });
 
         stack.Children.Add(
-            CommonControls.CreateInputRow(
+            CommonInput.CreateRow(
                 "Item Count:",
                 _loopCount,
                 value =>
@@ -318,16 +317,28 @@ public sealed class MainWindow : CommonWindow
                     _loopCount = value;
                     Log($"Loop count set to: {_loopCount}");
                 },
-                Theme));
+                Theme,
+                validator: val => val > 0));
 
         stack.Children.Add(
-            CommonControls.CreateInputRow(
+            CommonInput.CreateRow(
                 "Press Delay (ms):",
                 _pressDelay,
                 value =>
                 {
                     _pressDelay = value;
                     Log($"Delay set to: {_pressDelay} ms");
+                },
+                Theme));
+
+        stack.Children.Add(
+            CommonSegmentedToggle.CreateRow(
+                "Stop on Unfocus:",
+                _stopOnUnfocus,
+                isEnabled =>
+                {
+                    _stopOnUnfocus = isEnabled;
+                    Log($"Stop on unfocus: {_stopOnUnfocus}");
                 },
                 Theme));
 
@@ -422,25 +433,25 @@ public sealed class MainWindow : CommonWindow
         var stack = new StackPanel();
 
         stack.Children.Add(
-            CommonControls.CreateHelpStep(
+            CommonHelpStep.Create(
                 "1",
                 "Set Item Count to total Drinks + Toppings.",
                 Theme));
 
         stack.Children.Add(
-            CommonControls.CreateHelpStep(
+            CommonHelpStep.Create(
                 "2",
                 "Open Order tab in main menu.",
                 Theme));
 
         stack.Children.Add(
-            CommonControls.CreateHelpStep(
+            CommonHelpStep.Create(
                 "3",
                 "Press '\\' to enable UI navigation.",
                 Theme));
 
         stack.Children.Add(
-            CommonControls.CreateHelpStep(
+            CommonHelpStep.Create(
                 "4",
                 "Press 'F6' to Start / Stop macro.",
                 Theme));
@@ -588,7 +599,7 @@ public sealed class MainWindow : CommonWindow
     {
         Dispatcher.InvokeAsync(() =>
         {
-            if (_isRunning)
+            if (_stopOnUnfocus && _isRunning)
             {
                 Log("Roblox focus lost. Suspending macro.");
                 _cts?.Cancel();
@@ -608,7 +619,7 @@ public sealed class MainWindow : CommonWindow
             return;
         }
 
-        if (_focusMonitor != null && !_focusMonitor.IsFocused)
+        if (_stopOnUnfocus && _focusMonitor != null && !_focusMonitor.IsFocused)
         {
             Log("Roblox is not focused. Cannot start macro.");
             return;

@@ -26,7 +26,47 @@ Livia can be added to an existing console application project by adding the pack
 dotnet add package Livia
 ```
 
+## API
+
+Livia provides an easy-to-use API for creating automation macros. The following list is not exhaustive, but it covers the most commonly used APIs.
+
+### UI
+
+<details>
+  <summary>Click to expand</summary>
+
+| API                                    | Description                                        |
+| :------------------------------------- | -------------------------------------------------- |
+| `CommonTab.Create(...)`                | Creates a new tab in the UI.                       |
+| `CommonInput.CreateRow(...)`           | Creates a new row with an input box.               |
+| `CommonToggle.CreateRow(...)`          | Creates a new row with a toggle switch.            |
+| `CommonSegmentedToggle.CreateRow(...)` | Creates a new row with a segmented toggle switch.  |
+| `CommonHelpStep.Create(...)`           | Creates a new help step with a number and content. |
+
+</details>
+
+### Input Simulation
+
+<details>
+  <summary>Click to expand</summary>
+
+| API                                              | Description                                                            |
+| :----------------------------------------------- | ---------------------------------------------------------------------- |
+| `Mouse.MoveMouseToPositionOnVirtualDesktop(...)` | Moves the mouse to a specific position on the virtual desktop.         |
+| `Mouse.MoveMouseBy(...)`                         | Moves the mouse by a specified offset.                                 |
+| `Mouse.VerticalScroll(...)`                      | Scrolls the mouse wheel vertically by a multiple of wheel delta.       |
+| `Mouse.LeftClick(...)`                           | Simulates a left mouse click.                                          |
+| `Mouse.RightClick(...)`                          | Simulates a right mouse click.                                         |
+| `Keyboard.KeyDown(...)`                          | Simulates a key press down event.                                      |
+| `Keyboard.KeyUp(...)`                            | Simulates a key release event.                                         |
+| `Keyboard.KeyPress(...)`                         | Simulates a key press and release event.                               |
+| `VirtualKeys`                                    | An enumeration of key names and their corresponding virtual key codes. |
+
+</details>
+
 ## Prebuilt Macros
+
+The official Livia macros can be used as references for building your own macros. You can find them in the `Apps` folder of this repository.
 
 Run any official Livia macro project directly using the .NET CLI:
 
@@ -34,7 +74,7 @@ Run any official Livia macro project directly using the .NET CLI:
 dotnet run --project Apps/<Experience>/<Macro>
 ```
 
-### Supported Experiences
+### Livia Reference Macros
 
 <div align="center">
 

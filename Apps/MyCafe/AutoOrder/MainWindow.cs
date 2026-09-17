@@ -11,9 +11,8 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using Livia;
 using Livia.UI;
-using WindowsInput;
-using WindowsInput.Native;
 using Livia.Services;
+using Livia.Services.Input;
 
 namespace AutoOrder;
 
@@ -46,7 +45,7 @@ public sealed class MainWindow : CommonWindow
     // Input Simulator Instance
     // -------------------------------------------------------------------------
 
-    private readonly InputSimulator _inputSim = new();
+    private readonly InputSimulationService _inputSim = new();
 
     // -------------------------------------------------------------------------
     // Application State
@@ -663,7 +662,7 @@ public sealed class MainWindow : CommonWindow
                 // This should return the highlighter to either of the 3 buttons on the top dock.
                 for (int i = 0; i < 50; i++)
                 {
-                    _inputSim.Keyboard.KeyPress(VirtualKeyCode.UP);
+                    _inputSim.Keyboard.KeyPress(VirtualKeys.Up);
 
                     await Task.Delay(
                         1,
@@ -673,7 +672,7 @@ public sealed class MainWindow : CommonWindow
                 // Move to order listbox.
                 // This should move the highlighter to either the Drinks or Toppings button immediately above the listbox.
                 // At this point the next 2 down movements should move the highligher to the first item.
-                _inputSim.Keyboard.KeyPress(VirtualKeyCode.DOWN);
+                _inputSim.Keyboard.KeyPress(VirtualKeys.Down);
 
                 await Task.Delay(
                     _pressDelay,
@@ -686,7 +685,7 @@ public sealed class MainWindow : CommonWindow
                 {
                     for (int d = 0; d < 2; d++)
                     {
-                        _inputSim.Keyboard.KeyPress(VirtualKeyCode.DOWN);
+                        _inputSim.Keyboard.KeyPress(VirtualKeys.Down);
 
                         await Task.Delay(
                             _pressDelay,
@@ -696,7 +695,7 @@ public sealed class MainWindow : CommonWindow
                     // Purchase this item.
                     for (int e = 0; e < 10; e++)
                     {
-                        _inputSim.Keyboard.KeyPress(VirtualKeyCode.RETURN);
+                        _inputSim.Keyboard.KeyPress(VirtualKeys.Return);
 
                         await Task.Delay(
                             1,

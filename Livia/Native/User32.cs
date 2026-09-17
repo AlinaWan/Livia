@@ -12,6 +12,29 @@ internal static class User32
 
     internal const uint WM_QUIT = 0x0012;
 
+    // SendInput Constants
+    internal const int INPUT_MOUSE = 0;
+    internal const int INPUT_KEYBOARD = 1;
+
+    internal const uint MOUSEEVENTF_MOVE = 0x0001;
+    internal const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
+    internal const uint MOUSEEVENTF_LEFTUP = 0x0004;
+    internal const uint MOUSEEVENTF_RIGHTDOWN = 0x0008;
+    internal const uint MOUSEEVENTF_RIGHTUP = 0x0010;
+    internal const uint MOUSEEVENTF_MIDDLEDOWN = 0x0020;
+    internal const uint MOUSEEVENTF_MIDDLEUP = 0x0040;
+    internal const uint MOUSEEVENTF_ABSOLUTE = 0x8000;
+    internal const uint MOUSEEVENTF_WHEEL = 0x0800;
+
+    internal const uint KEYEVENTF_EXTENDEDKEY = 0x0001;
+    internal const uint KEYEVENTF_KEYUP = 0x0002;
+    internal const uint KEYEVENTF_SCANCODE = 0x0008;
+    internal const uint MAPVK_VK_TO_VSC = 0;
+    internal const uint MAPVK_VK_TO_VSC_EX = 4;
+
+    internal const int SM_CXSCREEN = 0;
+    internal const int SM_CYSCREEN = 1;
+
     internal delegate void WinEventDelegate(
         IntPtr hook,
         uint eventType,
@@ -21,9 +44,7 @@ internal static class User32
         uint eventThread,
         uint eventTime);
 
-    [DllImport(
-        "user32.dll",
-        SetLastError = true)]
+    [DllImport("user32.dll", SetLastError = true)]
     internal static extern IntPtr SetWinEventHook(
         uint eventMin,
         uint eventMax,
@@ -64,6 +85,15 @@ internal static class User32
     [DllImport("kernel32.dll")]
     internal static extern uint GetCurrentThreadId();
 
+    [DllImport("user32.dll")]
+    internal static extern int GetSystemMetrics(int nIndex);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    internal static extern uint MapVirtualKeyW(uint uCode, uint uMapType);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    internal static extern uint SendInput(uint nInputs, [In] INPUT[] pInputs, int cbSize);
+
     [StructLayout(LayoutKind.Sequential)]
     internal struct MSG
     {
@@ -74,5 +104,68 @@ internal static class User32
         public uint Time;
         public int PointX;
         public int PointY;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct MOUSEINPUT
+    {
+        public int Dx;
+        public int Dy;
+        public uint MouseData;
+        public uint DwFlags;
+        public uint Time;
+        public IntPtr DwExtraInfo;
+
+        public MOUSEINPUT(int dx, int dy, uint mouseData, uint dwFlags, uint time, IntPtr dwExtraInfo)
+        {
+            Dx = dx;
+            Dy = dy;
+            MouseData = mouseData;
+            DwFlags = dwFlags;
+            Time = time;
+            DwExtraInfo = dwExtraInfo;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct KEYBDINPUT
+    {
+        public ushort Vk;
+        public ushort Scan;
+        public uint Flags;
+        public uint Time;
+        public IntPtr ExtraInfo;
+
+        public KEYBDINPUT(ushort vk, ushort scan, uint flags, uint time, IntPtr extraInfo)
+        {
+            Vk = vk;
+            Scan = scan;
+            Flags = flags;
+            Time = time;
+            ExtraInfo = extraInfo;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct HARDWAREINPUT
+    {
+        public uint Msg;
+        public ushort ParamL;
+        public ushort ParamH;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    internal struct INPUTUNION
+    {
+        [FieldOffset(0)] public MOUSEINPUT Mi;
+        [FieldOffset(0)] public KEYBDINPUT Ki;
+        [FieldOffset(0)] public HARDWAREINPUT Hi;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct INPUT
+    {
+        public uint Type;
+        public INPUTUNION Un;
     }
 }

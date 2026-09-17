@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 
-    <AssemblyVersion>1.1.1.2</AssemblyVersion>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
 	<PackageVersion>$(AssemblyVersion)</PackageVersion>
 
     <PackageId>Livia</PackageId>
@@ -30,9 +30,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="README.md"
-          Pack="true"
-          PackagePath="\" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

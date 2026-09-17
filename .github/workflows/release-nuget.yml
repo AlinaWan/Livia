@@ -1,0 +1,97 @@
+name: Publish to NuGet
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_name:
+        description: "Name of the release (defaults to the tag)"
+        required: false
+        type: string
+      prerelease:
+        description: "Is this a prerelease?"
+        required: false
+        default: true
+        type: boolean
+      dry_run:
+        description: "Build everything but do not publish"
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      id-token: write
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Get versions
+        id: version
+        shell: pwsh
+        run: |
+          $assemblyVersion = dotnet msbuild Livia/Livia.csproj `
+            -getProperty:AssemblyVersion
+
+          $packageVersion = dotnet msbuild Livia/Livia.csproj `
+            -getProperty:PackageVersion
+
+          "assembly_version=$assemblyVersion" >> $env:GITHUB_OUTPUT
+          "package_version=$packageVersion" >> $env:GITHUB_OUTPUT
+
+          Write-Host "Assembly version: $assemblyVersion"
+          Write-Host "Package version: $packageVersion"
+
+      - name: Build project
+        run: dotnet build Livia/Livia.csproj -c Release
+
+      - name: Pack NuGet package
+        run: dotnet pack Livia/Livia.csproj -c Release --no-build -o ./artifacts
+
+      - name: Generate Conventional Commit Notes
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.assembly_version }}
+        run: npx conventional-changelog-cli@^5.0.0 -n changelog.config.js -i CHANGELOG.md -s -r 0
+
+      - name: NuGet login
+        if: ${{ !inputs.dry_run }}
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Publish to NuGet
+        if: ${{ !inputs.dry_run }}
+        run: |
+          dotnet nuget push ./artifacts/*.nupkg \
+            --source https://api.nuget.org/v3/index.json \
+            --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}"
+
+      - name: Create GitHub Release
+        if: ${{ inputs.dry_run == false }}
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: v${{ steps.version.outputs.assembly_version }}
+          name: ${{ inputs.release_name != '' && inputs.release_name || format('v{0}', steps.version.outputs.assembly_version) }}
+          body_path: CHANGELOG.md
+          prerelease: ${{ inputs.prerelease }}
+          files: ./artifacts/*.nupkg
+
+      - name: Upload Workflow Artifacts (Dry Run)
+        if: ${{ inputs.dry_run == true }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: nuget-package-${{ needs.validate-tag.outputs.clean_tag }}
+          path: |
+            ./artifacts/*.nupkg
+            CHANGELOG.md
+          retention-days: 7

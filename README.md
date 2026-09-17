@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/github/license/AlinaWan/DiscordRPCClient)](LICENSE)
 [![C#](https://custom-icon-badges.demolab.com/badge/C%23-%23239120.svg?logo=cshrp&logoColor=white)](#)
 [![.NET](https://img.shields.io/badge/.NET-512BD4?logo=dotnet&logoColor=fff)](#)
-[![Windows](https://custom-icon-badges.demolab.com/badge/For%20Windows-0078D6?logo=windows11&logoColor=white)](#)
+[![Windows](https://custom-icon-badges.demolab.com/badge/For%20Windows%2011-0078D6?logo=windows11&logoColor=white)](#)
 
 An open-source library for building Roblox automation macros in C#,
 with a collection of prebuilt macros built on its API.
@@ -17,12 +17,13 @@ with a collection of prebuilt macros built on its API.
 ## Prerequisites
 
 * [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
+* Windows 11 or later
 
 ## Build Your Own Macro
 
-Livia can be added to an existing console application project by adding a reference:
+Livia can be added to an existing console application project by adding the package from NuGet:
 ```powershell
-dotnet add <YourProject> reference Livia/Livia.csproj
+dotnet add package Livia
 ```
 
 ## Prebuilt Macros

@@ -1,12 +1,38 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.22000.0</TargetFramework>
+	<SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 
-	<AssemblyVersion>1.1.1.0</AssemblyVersion>
+    <AssemblyVersion>1.1.1.2</AssemblyVersion>
+	<PackageVersion>$(AssemblyVersion)</PackageVersion>
+
+    <PackageId>Livia</PackageId>
+    <Title>Livia</Title>
+    <Authors>Angelina</Authors>
+    <Description>
+      An open-source library for building Roblox automation macros in C#.
+    </Description>
+
+    <PackageTags>Roblox;automation;macro;WPF;Windows;C#</PackageTags>
+
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+    <PackageProjectUrl>https://github.com/AlinaWan/Livia</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/AlinaWan/Livia</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+	<Copyright>Copyright (c) 2026 Angelina</Copyright>
   </PropertyGroup>
-	
+
+  <ItemGroup>
+    <None Include="README.md"
+          Pack="true"
+          PackagePath="\" />
+  </ItemGroup>
+
 </Project>

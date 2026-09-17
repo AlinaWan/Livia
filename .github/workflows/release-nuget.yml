@@ -20,7 +20,7 @@ on:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: windows-2025-vs2026
     
     permissions:
       id-token: write
@@ -72,9 +72,8 @@ jobs:
       - name: Publish to NuGet
         if: ${{ !inputs.dry_run }}
         run: |
-          dotnet nuget push ./artifacts/*.nupkg \
-            --source https://api.nuget.org/v3/index.json \
-            --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}"
+          $package = Get-ChildItem ./artifacts/*.nupkg | Select-Object -First 1
+          dotnet nuget push $package.FullName --source https://api.nuget.org/v3/index.json --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}"
 
       - name: Create GitHub Release
         if: ${{ inputs.dry_run == false }}
@@ -90,7 +89,7 @@ jobs:
         if: ${{ inputs.dry_run == true }}
         uses: actions/upload-artifact@v7
         with:
-          name: nuget-package-${{ needs.validate-tag.outputs.clean_tag }}
+          name: nuget-package-${{ steps.version.outputs.package_version }}
           path: |
             ./artifacts/*.nupkg
             CHANGELOG.md

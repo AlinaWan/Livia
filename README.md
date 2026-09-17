@@ -10,6 +10,8 @@
 An open-source library for building Roblox automation macros in C#,
 with a collection of prebuilt macros built on its API.
 
+<img src="assets/preview.webp" alt="Preview" width="100%">
+
 </div>
 
 ## Prerequisites

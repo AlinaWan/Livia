@@ -883,7 +883,7 @@ public sealed class MainWindow : CommonWindow
                 // Navigate back to the top middle button row
                 // Here, it can highlight any of the top 4 buttons. After update 1 which added the 4th button, this is
                 // a problem, because the 1st button in the dock is no longer aligned with the order listbox.
-                // Lets just use the starting reference to the top right as we do in the rejoin sequence
+                // Lets just use the starting reference to the top right as we do in the rejoin sequence.
                 for (int i = 0; i < 20; i++)
                 {
                     _inputSim.Keyboard.KeyPress(VirtualKeys.Up);
@@ -894,7 +894,7 @@ public sealed class MainWindow : CommonWindow
                 }
                 await Task.Delay(_pressDelay, token);
 
-                // 5 left presses should get us to 4th button in the top middle button row, which seems the safest
+                // 3 left presses should get us to 4th button in the top middle button row, which seems the safest
                 for (int i = 0; i < 3; i++)
                 {
                     _inputSim.Keyboard.KeyPress(VirtualKeys.Left);

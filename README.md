@@ -30,6 +30,8 @@ dotnet add package Livia
 
 Livia provides an easy-to-use API for creating automation macros. The following list is not exhaustive, but it covers the most commonly used APIs.
 
+See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's APIs can be used to implement common functionality in an application, including detecting Roblox disconnects and implementing auto-rejoin.
+
 ### UI
 
 <details>
@@ -73,7 +75,7 @@ Livia provides an easy-to-use API for creating automation macros. The following 
 | API                  | Description                                                                   |
 | :------------------- | ----------------------------------------------------------------------------- |
 | `WindowFocusMonitor` | Monitors a process by executable name and raises an event on focus change.    |
-| `RobloxLogMonitor`   | Monitors the Roblox log file by a regex pattern and raises an event on match. |
+| `RobloxLogMonitor`   | Monitors a Roblox log file by a regex pattern and invokes callbacks on match. |
 
 </details>
 

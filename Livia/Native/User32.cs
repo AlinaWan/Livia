@@ -35,6 +35,9 @@ internal static class User32
     internal const int SM_CXSCREEN = 0;
     internal const int SM_CYSCREEN = 1;
 
+    internal const int SW_SHOW = 5;
+    internal const int SW_RESTORE = 9;
+
     internal delegate void WinEventDelegate(
         IntPtr hook,
         uint eventType,
@@ -93,6 +96,22 @@ internal static class User32
 
     [DllImport("user32.dll", SetLastError = true)]
     internal static extern uint SendInput(uint nInputs, [In] INPUT[] pInputs, int cbSize);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool IsIconic(
+    IntPtr hwnd);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool ShowWindow(
+        IntPtr hwnd,
+        int command);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool SetForegroundWindow(
+        IntPtr hwnd);
 
     [StructLayout(LayoutKind.Sequential)]
     internal struct MSG

@@ -6,7 +6,13 @@ to implement common functionality in an application.
 These examples are intended as reference implementations, and
 applications may implement the same functionality differently.
 
-## Detecting a Roblox Disconnect
+## User Interface
+
+*User interface guides coming soon.*
+
+## Automation & Lifecycle
+
+### Detecting a Roblox Disconnect
 
 `RobloxLogMonitor` can monitor Roblox log files and invoke a callback when a configured regular expression matches a log entry.
 
@@ -49,7 +55,7 @@ The application should decide what a disconnect means for its own macro. It may 
 
 ---
 
-## Implementing Auto-Rejoin
+### Implementing Auto-Rejoin
 
 Auto-rejoin can be implemented by combining `RobloxLogMonitor` with the application's own macro lifecycle and Roblox process management.
 

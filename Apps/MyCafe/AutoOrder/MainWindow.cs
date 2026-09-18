@@ -15,6 +15,7 @@ using Livia.Services;
 using Livia.Services.Input;
 using Livia.UI;
 using Livia.UI.Controls;
+using Livia.Utils;
 
 namespace AutoOrder;
 
@@ -53,7 +54,7 @@ public sealed class MainWindow : CommonWindow
     // Application State
     // -------------------------------------------------------------------------
 
-    private int _loopCount = 10;
+    private int _loopCount = 14;
     private int _pressDelay = 100;
     private bool _stopOnUnfocus = true;
     private bool _rejoinOnDisconnect = false;
@@ -710,6 +711,18 @@ public sealed class MainWindow : CommonWindow
             // Give Roblox time to load into the map/UI
             await Task.Delay(20000, token);
 
+            // Force focus the Roblox window
+            if (!WindowUtils.ForceFocusWindow(newProcess.MainWindowHandle))
+            {
+                Log("Failed to focus Roblox window.");
+            }
+            else
+            {
+                Log("Roblox window focused.");
+            }
+
+            await Task.Delay(5000, token); // Additional wait to let the window focus
+
             Log("Rejoin completed successfully. Restarting macro.");
 
             // This will skip the loading screen if it still hasn't loaded after the wait
@@ -733,7 +746,7 @@ public sealed class MainWindow : CommonWindow
             await Task.Delay(_pressDelay, token);
 
             // Move to the main menu button on to top middle button row
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 5; i++)
             {
                 _inputSim.Keyboard.KeyPress(VirtualKeys.Left);
                 await Task.Delay(_pressDelay, token);
@@ -845,13 +858,25 @@ public sealed class MainWindow : CommonWindow
                 await Task.Delay(_pressDelay, token);
 
                 // Navigate back to the top middle button row
-                // If it highlights any of the top 3, it's fine
-                for (int i = 0; i < 10; i++)
+                // Here, it can highlight any of the top 4 buttons. After update 1 which added the 4th button, this is
+                // a problem, because the 1st button in the dock is no longer aligned with the order listbox.
+                // Lets just use the starting reference to the top right as we do in the rejoin sequence
+                for (int i = 0; i < 20; i++)
                 {
                     _inputSim.Keyboard.KeyPress(VirtualKeys.Up);
                     await Task.Delay(1, token);
+
+                    _inputSim.Keyboard.KeyPress(VirtualKeys.Right);
+                    await Task.Delay(1, token);
                 }
                 await Task.Delay(_pressDelay, token);
+
+                // 5 left presses should get us to 4th button in the top middle button row, which seems the safest
+                for (int i = 0; i < 3; i++)
+                {
+                    _inputSim.Keyboard.KeyPress(VirtualKeys.Left);
+                    await Task.Delay(_pressDelay, token);
+                }
 
                 // Navigate down to the menu
                 // This should highlight either the Drinks or Toppings button

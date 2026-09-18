@@ -674,36 +674,59 @@ public sealed class MainWindow : CommonWindow
         SetStatus("Status: Reconnecting to Roblox...", Theme.Warning);
         Log("Initiating auto-rejoin...");
 
+        const int maxAttempts = 3;
+        TimeSpan detectionTimeout = TimeSpan.FromSeconds(60); // Timeout per attempt
+        Process? newProcess = null;
+
         try
         {
-            // Capture existing PID (if any) to detect when a NEW process starts
-            int oldPid = GetRobloxProcessId();
-
-            // Open rejoin link in browser (triggers Roblox launcher)
-            string rejoinUrl = _rejoinUrl;
-            Process.Start(new ProcessStartInfo
+            for (int attempt = 1; attempt <= maxAttempts; attempt++)
             {
-                FileName = rejoinUrl,
-                UseShellExecute = true
-            });
+                token.ThrowIfCancellationRequested();
+                Log($"Rejoin attempt {attempt} of {maxAttempts}...");
 
-            Log("Waiting for Roblox process to reload...");
+                // Capture existing PID before attempting launch
+                int oldPid = GetRobloxProcessId();
 
-            // Poll until a new process ID appears with an active main window
-            Process? newProcess = null;
-            while (newProcess == null)
-            {
-                await Task.Delay(1000, token);
-
-                var process = Process.GetProcessesByName("RobloxPlayerBeta").FirstOrDefault();
-                if (process != null && process.Id != oldPid)
+                // Open rejoin link in browser
+                Process.Start(new ProcessStartInfo
                 {
-                    process.Refresh();
-                    if (process.MainWindowHandle != IntPtr.Zero)
+                    FileName = _rejoinUrl,
+                    UseShellExecute = true
+                });
+
+                Log("Waiting for Roblox process to reload...");
+
+                // Poll for a new PID until detectionTimeout is reached
+                DateTime startTime = DateTime.UtcNow;
+                while (newProcess == null && (DateTime.UtcNow - startTime) < detectionTimeout)
+                {
+                    await Task.Delay(1000, token);
+
+                    var process = Process.GetProcessesByName("RobloxPlayerBeta").FirstOrDefault();
+                    if (process != null && process.Id != oldPid)
                     {
-                        newProcess = process;
+                        process.Refresh();
+                        if (process.MainWindowHandle != IntPtr.Zero)
+                        {
+                            newProcess = process;
+                        }
                     }
                 }
+
+                if (newProcess != null)
+                {
+                    break; // Successfully detected new PID
+                }
+
+                Log($"Attempt {attempt} timed out waiting for new process.");
+            }
+
+            if (newProcess == null)
+            {
+                Log("Failed to detect new Roblox instance after 3 attempts.");
+                SetStatus("Status: Rejoin Failed", Theme.Error);
+                return;
             }
 
             Log($"New Roblox instance detected (PID: {newProcess.Id}). Waiting for game load...");

@@ -79,6 +79,19 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 
 </details>
 
+### Utilities
+
+<details>
+  <summary>Click to expand</summary>
+
+| API                                     | Description                                                                      |
+| :-------------------------------------- | -------------------------------------------------------------------------------- |
+| WindowUtils.ForceFocusWindow(...)       | Forces the target application window to the foreground and brings it into focus. |
+| SystemUtils.InitiateSystemShutdown(...) | Requests a system shutdown with a specified timeout and display message.         |
+| SystemUtils.AbortSystemShutdown(...)    | Aborts a previously scheduled system shutdown request.                           |
+
+</details>
+
 ## Prebuilt Macros
 
 The official Livia macros can be used as references for building your own macros. You can find them in the `Apps` folder of this repository.

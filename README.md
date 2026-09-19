@@ -1,14 +1,15 @@
 <div align="center">
   <h1>Livia</h1>
-  <p><i>"Magnus ab integro saeclorum nascitur ordo" —Virgil, Eclogue IV (c. 40 BCE)</i></p>
+  <p><b>A New Frontier in Macro Development</b></p>
 
-[![License](https://img.shields.io/github/license/AlinaWan/DiscordRPCClient)](LICENSE)
+[![License](https://img.shields.io/github/license/AlinaWan/Livia)](LICENSE)
 [![C#](https://custom-icon-badges.demolab.com/badge/C%23-%23239120.svg?logo=cshrp&logoColor=white)](#)
 [![.NET](https://img.shields.io/badge/.NET-512BD4?logo=dotnet&logoColor=fff)](#)
 [![Windows](https://custom-icon-badges.demolab.com/badge/For%20Windows%2011-0078D6?logo=windows11&logoColor=white)](#)
 
-An open-source library for building Roblox automation macros in C#,
-with a collection of prebuilt macros built on its API.
+An open-source C# automation library for building Roblox macros and applications.
+
+<sub>*"Magnus ab integro saeclorum nascitur ordo" —Virgil, Eclogue IV (c. 40 BCE)*</sub>
 
 <img src="assets/preview.webp" alt="Preview" width="100%">
 
@@ -96,7 +97,7 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 
 </details>
 
-## Prebuilt Macros
+## Livia Reference Macros
 
 The official Livia macros can be used as references for building your own macros. You can find them in the `Apps` folder of this repository.
 
@@ -106,11 +107,11 @@ Run any official Livia macro project directly using the .NET CLI:
 dotnet run --project Apps/<Experience>/<Macro>
 ```
 
-### Livia Reference Macros
+### Available Reference Macros
 
 <div align="center">
 
-| Experience                                              | Available Macros                     |
+| Example Experience                                      | Available Reference Macros           |
 | :------------------------------------------------------ | :----------------------------------- |
 | [My Cafe](https://www.roblox.com/games/133345376331809) | [Auto Order](Apps/MyCafe/AutoOrder/) |
 | more coming soon™                                       |                                      |

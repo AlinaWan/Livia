@@ -8,7 +8,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-    <AssemblyVersion>1.8.0.0</AssemblyVersion>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
     <PackageVersion>$(AssemblyVersion)</PackageVersion>
 
     <PackageId>Livia</PackageId>

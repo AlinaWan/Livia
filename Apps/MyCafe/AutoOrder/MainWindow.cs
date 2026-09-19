@@ -353,6 +353,8 @@ public sealed class MainWindow : CommonWindow
             BorderThickness = new Thickness(1)
         };
 
+        CommonScrollBar.Apply(card, Theme);
+
         _debugLog = new TextBox
         {
             IsReadOnly = true,

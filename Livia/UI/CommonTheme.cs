@@ -82,6 +82,17 @@ public sealed class CommonTheme
     } =
         Color.FromRgb(55, 55, 55);
 
+    public Color ScrollBarBackground
+    {
+        get; init;
+    } = Color.FromRgb(28, 28, 28);
+
+
+    public Color ScrollBarThumb
+    {
+        get; init;
+    } = Color.FromRgb(48, 48, 48);
+
     public Color Accent
     {
         get; init;

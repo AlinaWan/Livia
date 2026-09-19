@@ -11,6 +11,7 @@ internal static class User32
     internal const uint WINEVENT_SKIPOWNPROCESS = 0x0002;
 
     internal const uint WM_QUIT = 0x0012;
+    internal const uint WM_HOTKEY = 0x0312;
 
     // SendInput Constants
     internal const int INPUT_MOUSE = 0;
@@ -78,15 +79,50 @@ internal static class User32
         IntPtr wParam,
         IntPtr lParam);
 
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool PostThreadMessageW(
+        uint threadId,
+        uint msg,
+        UIntPtr wParam,
+        IntPtr lParam);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool RegisterHotKey(
+        IntPtr hWnd,
+        int id,
+        uint fsModifiers,
+        uint vk);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool UnregisterHotKey(
+        IntPtr hWnd,
+        int id);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    internal static extern int GetMessageW(
+        out MSG lpMsg,
+        IntPtr hWnd,
+        uint wMsgFilterMin,
+        uint wMsgFilterMax);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool TranslateMessage(
+        ref MSG lpMsg);
+
+    [DllImport("user32.dll")]
+    internal static extern IntPtr DispatchMessageW(
+        ref MSG lpMsg);
+
     [DllImport("user32.dll")]
     internal static extern int GetMessage(
         out MSG message,
         IntPtr hwnd,
         uint filterMin,
         uint filterMax);
-
-    [DllImport("kernel32.dll")]
-    internal static extern uint GetCurrentThreadId();
 
     [DllImport("user32.dll")]
     internal static extern int GetSystemMetrics(int nIndex);

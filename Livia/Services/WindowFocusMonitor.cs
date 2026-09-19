@@ -110,7 +110,7 @@ public sealed class WindowFocusMonitor : IDisposable
     private void MonitorThread()
     {
         _threadId =
-            User32.GetCurrentThreadId();
+            Kernel32.GetCurrentThreadId();
 
         _callback =
             HandleWinEvent;

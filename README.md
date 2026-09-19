@@ -53,17 +53,19 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 <details>
   <summary>Click to expand</summary>
 
-| API                                              | Description                                                            |
-| :----------------------------------------------- | ---------------------------------------------------------------------- |
-| `Mouse.MoveMouseToPositionOnVirtualDesktop(...)` | Moves the mouse to a specific position on the virtual desktop.         |
-| `Mouse.MoveMouseBy(...)`                         | Moves the mouse by a specified offset.                                 |
-| `Mouse.VerticalScroll(...)`                      | Scrolls the mouse wheel vertically by a multiple of wheel delta.       |
-| `Mouse.LeftClick(...)`                           | Simulates a left mouse click.                                          |
-| `Mouse.RightClick(...)`                          | Simulates a right mouse click.                                         |
-| `Keyboard.KeyDown(...)`                          | Simulates a key press down event.                                      |
-| `Keyboard.KeyUp(...)`                            | Simulates a key release event.                                         |
-| `Keyboard.KeyPress(...)`                         | Simulates a key press and release event.                               |
-| `VirtualKeys`                                    | An enumeration of key names and their corresponding virtual key codes. |
+| API                                              | Description                                                               |
+| :----------------------------------------------- | ------------------------------------------------------------------------- |
+| `HotkeyService`                                  | Registers hotkeys with optional modifiers.                                |
+| `Mouse.MoveMouseToPositionOnVirtualDesktop(...)` | Moves the mouse to a specific position on the virtual desktop.            |
+| `Mouse.MoveMouseBy(...)`                         | Moves the mouse by a specified offset.                                    |
+| `Mouse.VerticalScroll(...)`                      | Scrolls the mouse wheel vertically by a multiple of wheel delta.          |
+| `Mouse.LeftClick(...)`                           | Simulates a left mouse click.                                             |
+| `Mouse.RightClick(...)`                          | Simulates a right mouse click.                                            |
+| `Keyboard.KeyDown(...)`                          | Simulates a key press down event.                                         |
+| `Keyboard.KeyUp(...)`                            | Simulates a key release event.                                            |
+| `Keyboard.KeyPress(...)`                         | Simulates a key press and release event.                                  |
+| `VirtualKeys`                                    | An enumeration of key names and their corresponding virtual key codes.    |
+| `ModifierKeys`                                   | An enumeration of modifier key names and their corresponding flag values. |
 
 </details>
 
@@ -72,10 +74,12 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 <details>
   <summary>Click to expand</summary>
 
-| API                  | Description                                                                   |
-| :------------------- | ----------------------------------------------------------------------------- |
-| `WindowFocusMonitor` | Monitors a process by executable name and raises an event on focus change.    |
-| `RobloxLogMonitor`   | Monitors a Roblox log file by a regex pattern and invokes callbacks on match. |
+| API                     | Description                                                                   |
+| :---------------------- | ----------------------------------------------------------------------------- |
+| `WindowFocusMonitor`    | Monitors a process by executable name and raises an event on focus change.    |
+| `RobloxLogMonitor`      | Monitors a Roblox log file by a regex pattern and invokes callbacks on match. |
+| `DiscordWebhookService` | Sends payloads to a Discord channel via webhooks.                             |
+| `SmsService`            | Sends SMS text messages to a specified phone number.                          |
 
 </details>
 

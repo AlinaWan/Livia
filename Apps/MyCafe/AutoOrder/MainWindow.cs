@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using Livia;
@@ -22,33 +21,11 @@ namespace AutoOrder;
 public sealed class MainWindow : CommonWindow
 {
     // -------------------------------------------------------------------------
-    // Win32 Native Imports
-    // -------------------------------------------------------------------------
-
-    [DllImport("user32.dll")]
-    private static extern bool RegisterHotKey(
-        IntPtr hWnd,
-        int id,
-        uint fsModifiers,
-        uint vk);
-
-    [DllImport("user32.dll")]
-    private static extern bool UnregisterHotKey(
-        IntPtr hWnd,
-        int id);
-
-    // -------------------------------------------------------------------------
-    // Native Constants
-    // -------------------------------------------------------------------------
-
-    private const int HotkeyId = 9000;
-    private const uint VkF6 = 0x75;
-
-    // -------------------------------------------------------------------------
-    // Input Simulator Instance
+    // Input Simulator Instance and Hotkey Instance
     // -------------------------------------------------------------------------
 
     private readonly InputSimulationService _inputSim = new();
+    private readonly HotkeyService _hotkeys;
 
     // -------------------------------------------------------------------------
     // Application State
@@ -84,6 +61,13 @@ public sealed class MainWindow : CommonWindow
         StatusBar.SetStatus(
             "Status: Suspended (Press F6 to toggle)",
             Color.FromRgb(50, 50, 50));
+
+        _hotkeys = new HotkeyService(this);
+
+        _hotkeys.Register(
+            VirtualKeys.F6,
+            ModifierKeys.ModNoRepeat,
+            ToggleMacro);
     }
 
     private static CommonWindowOptions CreateWindowOptions()
@@ -167,20 +151,6 @@ public sealed class MainWindow : CommonWindow
         {
             [@"\[FLog::Network\] Time to disconnect replication data: ([\d.]+)"] = OnRobloxDisconnected
         });
-
-        var helper = new WindowInteropHelper(this);
-        var source = HwndSource.FromHwnd(helper.Handle);
-
-        source?.AddHook(HwndHook);
-
-        if (!RegisterHotKey(
-                helper.Handle,
-                HotkeyId,
-                0,
-                VkF6))
-        {
-            Log("WARNING: Failed to register F6 hotkey.");
-        }
     }
 
     protected override void OnClosed(EventArgs e)
@@ -191,35 +161,12 @@ public sealed class MainWindow : CommonWindow
             _focusMonitor.Dispose();
         }
 
-        var helper = new WindowInteropHelper(this);
-
-        UnregisterHotKey(
-            helper.Handle,
-            HotkeyId);
+        _hotkeys.Dispose();
 
         _cts?.Cancel();
         _cts?.Dispose();
 
         base.OnClosed(e);
-    }
-
-    private IntPtr HwndHook(
-        IntPtr hwnd,
-        int msg,
-        IntPtr wParam,
-        IntPtr lParam,
-        ref bool handled)
-    {
-        const int WmHotkey = 0x0312;
-
-        if (msg == WmHotkey &&
-            wParam.ToInt32() == HotkeyId)
-        {
-            ToggleMacro();
-            handled = true;
-        }
-
-        return IntPtr.Zero;
     }
 
     // -------------------------------------------------------------------------

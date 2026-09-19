@@ -2,13 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0-windows10.0.22000.0</TargetFramework>
-	<SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-    <AssemblyVersion>1.6.0.0</AssemblyVersion>
-	<PackageVersion>$(AssemblyVersion)</PackageVersion>
+    <AssemblyVersion>1.7.0.0</AssemblyVersion>
+    <PackageVersion>$(AssemblyVersion)</PackageVersion>
 
     <PackageId>Livia</PackageId>
     <Title>Livia</Title>
@@ -26,7 +27,7 @@
     <RepositoryType>git</RepositoryType>
 
     <PackageReadmeFile>README.md</PackageReadmeFile>
-	<Copyright>Copyright (c) 2026 Angelina</Copyright>
+    <Copyright>Copyright (c) 2026 Angelina</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

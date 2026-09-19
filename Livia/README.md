@@ -1,7 +1,10 @@
 # Livia
-*"Magnus ab integro saeclorum nascitur ordo" —Virgil, Eclogue IV (c. 40 BCE)*
 
-An open-source library for building Roblox automation macros in C#.
+**A New Frontier in Macro Development**
+
+An open-source C# automation library for building Roblox macros and applications.
+
+*"Magnus ab integro saeclorum nascitur ordo" —Virgil, Eclogue IV (c. 40 BCE)*
 
 ## Prerequisites
 

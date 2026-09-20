@@ -8,7 +8,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-    <AssemblyVersion>2.1.2.0</AssemblyVersion>
+    <AssemblyVersion>2.2.0.0</AssemblyVersion>
       <ApplicationIcon>..\..\..\Livia\Assets\KaarinaaIcon.ico</ApplicationIcon>
   </PropertyGroup>
 

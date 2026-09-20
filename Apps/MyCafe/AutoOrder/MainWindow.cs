@@ -68,6 +68,11 @@ public sealed class MainWindow : CommonWindow
             VirtualKeys.F6,
             ModifierKeys.ModNoRepeat,
             ToggleMacro);
+
+        _hotkeys.Register(
+            VirtualKeys.Escape,
+            ModifierKeys.None,
+            () => SystemUtils.AbortSystemShutdown());
     }
 
     private static CommonWindowOptions CreateWindowOptions()
@@ -675,6 +680,7 @@ public sealed class MainWindow : CommonWindow
             {
                 Log("Failed to detect new Roblox instance after 3 attempts.");
                 SetStatus("Status: Rejoin Failed", Theme.Error);
+                SystemUtils.InitiateSystemShutdown(30, "Shutting down due to rejoin failure. Press Esc to abort.");
                 return;
             }
 
@@ -764,6 +770,7 @@ public sealed class MainWindow : CommonWindow
             _isRunning = false;
 
             SetStatus("Status: Rejoin Failed", Theme.Error);
+            SystemUtils.InitiateSystemShutdown(30, "Shutting down due to rejoin failure. Press Esc to abort.");
         }
     }
 

@@ -27,6 +27,11 @@ Livia can be added to an existing console application project by adding the pack
 dotnet add package Livia
 ```
 
+or install the official Python bindings to an existing Python project:
+```powershell
+pip install livia-python # -> import livia
+```
+
 ## API
 
 Livia provides an easy-to-use API for creating automation macros. The following list is not exhaustive, but it covers the most commonly used APIs.

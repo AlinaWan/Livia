@@ -14,6 +14,17 @@ on:
         default: true
         type: boolean
 
+  workflow_call:
+    inputs:
+      publish_testpypi:
+        required: false
+        type: boolean
+        default: false
+      dry_run:
+        required: false
+        type: boolean
+        default: true
+
 jobs:
   build:
     name: Build Python Package

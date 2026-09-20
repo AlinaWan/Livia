@@ -1,0 +1,46 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_name:
+        description: "Name of the release (defaults to the tag)"
+        required: false
+        type: string
+      prerelease:
+        description: "Is this a prerelease?"
+        required: false
+        default: true
+        type: boolean
+      publish_testpypi:
+        description: "Publish to TestPyPI instead of PyPI"
+        required: false
+        default: false
+        type: boolean
+      dry_run:
+        description: "Build everything but do not publish"
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  nuget:
+    uses: ./.github/workflows/publish-nuget.yml
+    permissions:
+      id-token: write
+      contents: write
+    with:
+      release_name: ${{ inputs.release_name }}
+      prerelease: ${{ inputs.prerelease }}
+      dry_run: ${{ inputs.dry_run }}
+    secrets: inherit
+
+  pypi:
+    uses: ./.github/workflows/publish-pypi.yml
+    permissions:
+      id-token: write
+      contents: read
+    with:
+      publish_testpypi: ${{ inputs.publish_testpypi }}
+      dry_run: ${{ inputs.dry_run }}
+    secrets: inherit

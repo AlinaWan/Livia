@@ -36,11 +36,20 @@ jobs:
     secrets: inherit
 
   pypi:
-    uses: ./.github/workflows/publish-pypi.yml
+    name: Dispatch PyPI workflow
+    runs-on: ubuntu-latest
+
     permissions:
-      id-token: write
+      actions: write
       contents: read
-    with:
-      publish_testpypi: ${{ inputs.publish_testpypi }}
-      dry_run: ${{ inputs.dry_run }}
-    secrets: inherit
+
+    steps:
+      - name: Dispatch PyPI workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run publish-pypi.yml \
+            --repo "${{ github.repository }}" \
+            --ref "${{ github.ref_name }}" \
+            -f publish_testpypi="${{ inputs.publish_testpypi }}" \
+            -f dry_run="${{ inputs.dry_run }}"

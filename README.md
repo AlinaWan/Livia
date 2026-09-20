@@ -85,6 +85,7 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 | `DxgiFrameProvider`     | Captures a screen region directly from a DXGI GPU staging buffer.             |
 | `WindowFocusMonitor`    | Monitors a process by executable name and raises an event on focus change.    |
 | `RobloxLogMonitor`      | Monitors a Roblox log file by a regex pattern and invokes callbacks on match. |
+| `WindowsOcrService`     | Provides optical character recognition using the native Windows OCR engine.   |
 | `DiscordWebhookService` | Sends payloads to a Discord channel via webhooks.                             |
 | `SmsService`            | Sends SMS text messages to a specified phone number.                          |
 

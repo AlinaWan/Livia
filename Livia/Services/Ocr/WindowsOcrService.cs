@@ -1,4 +1,5 @@
-﻿using Windows.Graphics.Imaging;
+﻿using System.IO;
+using Windows.Graphics.Imaging;
 using Windows.Media.Ocr;
 using Windows.Storage.Streams;
 
@@ -12,17 +13,29 @@ public sealed class WindowsOcrService
     private readonly OcrEngine _engine;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="WindowsOcrService"/> class
-    /// using the OCR languages configured for the current user.
+    /// Initializes a new instance of the <see cref="WindowsOcrService"/> class.
     /// </summary>
+    /// <param name="language">
+    /// The BCP-47 language tag to use for OCR, or <see langword="null"/> to use
+    /// the current user's default OCR language.
+    /// </param>
     /// <exception cref="InvalidOperationException">
-    /// Thrown when Windows cannot create an OCR engine for the user's configured languages.
+    /// Thrown when Windows cannot create an OCR engine for the requested language.
     /// </exception>
-    public WindowsOcrService()
+    public WindowsOcrService(string? language = null)
     {
-        _engine = OcrEngine.TryCreateFromUserProfileLanguages()
-            ?? throw new InvalidOperationException(
-                "Windows OCR is unavailable for the user's configured languages.");
+        _engine = language is null
+            ? OcrEngine.TryCreateFromUserProfileLanguages()
+            : OcrEngine.TryCreateFromLanguage(
+                new Windows.Globalization.Language(language));
+
+        if (_engine is null)
+        {
+            throw new InvalidOperationException(
+                language is null
+                    ? "Windows OCR is unavailable for the user's configured languages."
+                    : $"Windows OCR does not support the language '{language}'.");
+        }
     }
 
     /// <summary>
@@ -69,7 +82,7 @@ public sealed class WindowsOcrService
 
         using (DataWriter writer = new(stream))
         {
-            writer.WriteBytes(imageBytes.Span.ToArray());
+            writer.WriteBytes(imageBytes.ToArray());
             await writer.StoreAsync().AsTask(cancellationToken);
         }
 
@@ -84,5 +97,24 @@ public sealed class WindowsOcrService
             .AsTask(cancellationToken);
 
         return await RecognizeAsync(bitmap, cancellationToken);
+    }
+
+    /// <summary>
+    /// Runs Windows OCR on an encoded image file.
+    /// </summary>
+    /// <param name="imagePath">The path to the image file.</param>
+    /// <param name="cancellationToken">A token used to cancel the operation.</param>
+    /// <returns>The text recognized by Windows OCR.</returns>
+    public async Task<string> RecognizeAsync(
+        string imagePath,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(imagePath);
+
+        byte[] imageBytes = await File.ReadAllBytesAsync(
+            imagePath,
+            cancellationToken);
+
+        return await RecognizeAsync(imageBytes, cancellationToken);
     }
 }

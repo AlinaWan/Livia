@@ -59,11 +59,6 @@ jobs:
       - name: Pack NuGet package
         run: dotnet pack Livia/Livia.csproj -c Release --no-build -o ./artifacts
 
-      - name: Generate Conventional Commit Notes
-        env:
-          RELEASE_VERSION: ${{ steps.version.outputs.assembly_version }}
-        run: npx conventional-changelog-cli@^5.0.0 -n changelog.config.js -i CHANGELOG.md -s -r 0
-
       - name: NuGet login
         if: ${{ !inputs.dry_run }}
         uses: NuGet/login@v1
@@ -83,7 +78,7 @@ jobs:
         with:
           tag_name: v${{ steps.version.outputs.assembly_version }}
           name: ${{ inputs.release_name != '' && inputs.release_name || format('v{0}', steps.version.outputs.assembly_version) }}
-          body_path: CHANGELOG.md
+          generate_release_notes: true
           prerelease: ${{ inputs.prerelease }}
           files: ./artifacts/*.nupkg
 
@@ -94,5 +89,4 @@ jobs:
           name: nuget-package-${{ steps.version.outputs.package_version }}
           path: |
             ./artifacts/*.nupkg
-            CHANGELOG.md
           retention-days: 7

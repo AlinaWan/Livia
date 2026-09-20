@@ -197,3 +197,45 @@ while (newProcess == null)
 ```
 
 Once `newProcess` is assigned, the application has found the new Roblox process and can continue with whatever initialization or monitoring it requires.
+
+---
+
+## Screen Capture
+
+### Capturing a Screen Region
+
+`DxgiFrameProvider` captures screen regions using DXGI Desktop Duplication
+and provides direct access to the mapped pixel buffer without copying the
+pixels into a managed buffer.
+
+Create a frame provider and specify the region to capture:
+
+```csharp
+using var provider = new DxgiFrameProvider();
+
+var region = new CaptureRegion(
+    Left: 0,
+    Top: 0,
+    Right: 1920,
+    Bottom: 1080);
+
+using Frame? frame = provider.Grab(region);
+
+if (frame == null)
+{
+    return;
+}
+````
+
+The captured frame provides its dimensions, row pitch, and BGRA8 pixel data:
+
+```csharp
+ReadOnlySpan<byte> pixels = frame.Pixels;
+
+int width = frame.Width;
+int height = frame.Height;
+int rowPitch = frame.RowPitch;
+```
+
+The frame must remain undisposed while its pixel data is being used.
+Disposing the frame releases the underlying DXGI mapping.

@@ -77,6 +77,7 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 
 | API                     | Description                                                                   |
 | :---------------------- | ----------------------------------------------------------------------------- |
+| `DxgiFrameProvider`     | Captures a screen region directly from a DXGI GPU staging buffer.             |
 | `WindowFocusMonitor`    | Monitors a process by executable name and raises an event on focus change.    |
 | `RobloxLogMonitor`      | Monitors a Roblox log file by a regex pattern and invokes callbacks on match. |
 | `DiscordWebhookService` | Sends payloads to a Discord channel via webhooks.                             |

@@ -2,7 +2,7 @@
 
 **A New Frontier in Macro Development**
 
-An open-source C# automation library for building Roblox macros and applications.
+An avant-garde open-source C# automation framework and engine that brings reusable, extensible software architecture to Roblox macros, challenging the status quo of building automation as isolated, one-off scripts.
 
 *"Magnus ab integro saeclorum nascitur ordo" —Virgil, Eclogue IV (c. 40 BCE)*
 

@@ -36,15 +36,31 @@ if (-not (Test-Path $vcToolsPath)) {
     throw "MSVC tools were not found at '$vcToolsPath'."
 }
 
-$toolsets = Get-ChildItem $vcToolsPath -Directory
+$toolsets = Get-ChildItem $vcToolsPath -Directory |
+    Where-Object {
+        $_.Name -match '^14\.(\d+)\.'
+    } |
+    Sort-Object {
+        [version]$_.Name
+    } -Descending
 
-$platformToolset = if ($toolsets.Name -match '^14\.5\d\.') {
-    "v145"
+$platformToolset = $null
+
+foreach ($toolset in $toolsets) {
+    $minor = [int]$toolset.Name.Split('.')[1]
+
+    if ($minor -ge 50) {
+        $platformToolset = "v145"
+        break
+    }
+
+    if ($minor -ge 30) {
+        $platformToolset = "v143"
+        break
+    }
 }
-elseif ($toolsets.Name -match '^14\.3\d\.') {
-    "v143"
-}
-else {
+
+if (-not $platformToolset) {
     throw "MSVC v143 or newer is required. Install Visual Studio 2022 or newer with the C++ x64 tools."
 }
 
@@ -55,6 +71,10 @@ Write-Host "MSVC toolset: $platformToolset"
 $project = Join-Path `
     $PSScriptRoot `
     "Livia\Native\ScreenCapture\DxgiFrameCapture.vcxproj"
+
+if (-not (Test-Path $project)) {
+    throw "Native project was not found at '$project'."
+}
 
 & $msbuild `
     $project `

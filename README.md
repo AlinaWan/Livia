@@ -119,10 +119,11 @@ dotnet run --project Apps/<Experience>/<Macro>
 
 <div align="center">
 
-| Example Experience                                      | Available Reference Macros           |
-| :------------------------------------------------------ | :----------------------------------- |
-| [My Cafe](https://www.roblox.com/games/133345376331809) | [Auto Order](Apps/MyCafe/AutoOrder/) |
-| more coming soon™                                       |                                      |
+| Example Experience                                      | Available Reference Macros              |
+| :------------------------------------------------------ | :-------------------------------------- |
+| [My Cafe](https://www.roblox.com/games/133345376331809) | [Auto Order](Apps/MyCafe/AutoOrder/)    |
+| General                                                 | [Auto Rejoin](Apps/General/AutoRejoin/) |
+| more coming soon™                                       |                                         |
 
 </div>
 

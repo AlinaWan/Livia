@@ -23,7 +23,6 @@
   <ItemGroup>
     <Compile Include="livia\__init__.py" />
     <Compile Include="setup.py" />
-    <Compile Include="test_api.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="livia\" />

@@ -4,6 +4,7 @@
 
 [![License](https://img.shields.io/github/license/AlinaWan/Livia)](LICENSE)
 [![C#](https://custom-icon-badges.demolab.com/badge/C%23-%23239120.svg?logo=cshrp&logoColor=white)](#)
+[![C++](https://img.shields.io/badge/C++-%2300599C.svg?logo=c%2B%2B&logoColor=white)](#)
 [![.NET](https://img.shields.io/badge/.NET-512BD4?logo=dotnet&logoColor=fff)](#)
 [![Windows](https://custom-icon-badges.demolab.com/badge/For%20Windows%2011-0078D6?logo=windows11&logoColor=white)](#)
 
@@ -18,6 +19,8 @@ An avant-garde open-source C# automation framework and engine that brings reusab
 ## Prerequisites
 
 * [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
+* Visual Studio 2022 or 2026
+  * Desktop development with C++
 * Windows 11 or later
 
 ## Build Your Own Macro

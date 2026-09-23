@@ -139,6 +139,12 @@ dotnet run --project Apps/<Experience>/<Macro>
 
 </div>
 
+## Troubleshooting
+
+Common issues encountered when using Livia,
+including analyzer diagnostics, build errors, and runtime problems
+are outlined in [Troubleshooting Livia](TROUBLESHOOTING.md).
+
 ---
 
 <div align="center">

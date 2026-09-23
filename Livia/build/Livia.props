@@ -1,0 +1,11 @@
+<Project>
+
+  <PropertyGroup>
+    <LiviaEnableBrowserCookieDecryption Condition="'$(LiviaEnableBrowserCookieDecryption)' == ''">false</LiviaEnableBrowserCookieDecryption>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <CompilerVisibleProperty Include="LiviaEnableBrowserCookieDecryption" />
+  </ItemGroup>
+
+</Project>

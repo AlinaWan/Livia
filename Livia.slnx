@@ -3,6 +3,7 @@
     <Project Path="Apps/General/AutoRejoin/AutoRejoin.csproj" Id="caea8ea3-c0f6-4c9a-abaa-9eb383fa672f" />
     <Project Path="Apps/MyCafe/AutoOrder/AutoOrder.csproj" Id="3eb6977e-0efa-424c-9924-9bf474902d3a" />
   </Folder>
+  <Project Path="Livia.Analyzers/Livia.Analyzers.csproj" Id="f6b4d974-9948-4e90-bc47-8a0e3592dd9c" />
   <Project Path="Livia/Livia.csproj" Id="99b8123d-794e-4cf7-bdc7-b32a9d30619b" />
   <Project Path="Python/Python.pyproj" Type="888888a0-9f3d-457c-b088-3a5042f75d52" Id="6b8de234-7715-4668-8f0b-f373b554e247">
     <Build Project="false" />

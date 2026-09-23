@@ -200,6 +200,35 @@ Once `newProcess` is assigned, the application has found the new Roblox process 
 
 ---
 
+### Automatically Retrieving a Private Server Link
+
+Applications can automatically fetch a private server join link by retrieving the user's `.ROBLOSECURITY` authentication token from a Chromium-based browser and interacting with the game's running instances interface.
+
+First, extract the token using `BrowserUtils`. Note that this requires **elevated privileges** and the MSBuild property `LiviaEnableBrowserCookieDecryption` to be set to `true` to successfully access the browser's protected local state and files:
+
+```csharp
+string? robloxSecurityToken = BrowserUtils.GetCookieValue(
+    "Google\\Chrome", 
+    ".roblox.com", 
+    ".ROBLOSECURITY");
+```
+
+Once the token is available, pass it into `RobloxServerUtils` along with the game URL and target server name (or pass `null` to automatically select the first available configurable server):
+
+```csharp
+string gameUrl = "https://www.roblox.com/games/123456789";
+string serverName = "JaneDoe's server"; // Optional: pass null for the first available
+
+string? joinLink = await RobloxServerUtils.GetPrivateServerJoinLinkAsync(
+    gameUrl, 
+    serverName, 
+    robloxSecurityToken);
+```
+
+*(Note: If the private server link has never been generated before on Roblox, the returned join link will be `null`.)*
+
+---
+
 ## Screen Capture
 
 ### Capturing a Screen Region

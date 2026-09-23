@@ -923,3 +923,6 @@ Python/livia/_version.py
 Python/livia/runtimeconfig.json
 Python/livia/Livia.dll
 Python/livia/Native/
+
+!Livia/build/
+!Livia/build/Livia.props

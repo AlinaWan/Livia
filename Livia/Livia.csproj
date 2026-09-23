@@ -7,9 +7,10 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-    <AssemblyVersion>1.11.3.0</AssemblyVersion>
+    <AssemblyVersion>1.12.0.0</AssemblyVersion>
     <PackageVersion>$(AssemblyVersion)</PackageVersion>
 
     <PackageId>Livia</PackageId>
@@ -32,12 +33,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="build\Livia.props" Pack="true" PackagePath="build\" />
+
+    <None Include="..\Livia.Analyzers\bin\$(Configuration)\netstandard2.0\Livia.Analyzers.dll" Pack="true" PackagePath="analyzers\dotnet\cs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Livia.Analyzers\Livia.Analyzers.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
 
     <None Include="Native\ScreenCapture\Livia.Native.DxgiFrameCapture.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Native\ScreenCapture\Livia.Native.DxgiFrameCapture.dll</Link>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.12" />
+    <PackageReference Include="PuppeteerSharp" Version="25.11.0" />
+    <PackageReference Include="System.Management" Version="10.0.12" />
   </ItemGroup>
 
   <Target Name="BuildScreenCapture" BeforeTargets="BeforeBuild">

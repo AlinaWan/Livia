@@ -19,9 +19,16 @@ An avant-garde open-source C# automation framework and engine that brings reusab
 ## Prerequisites
 
 * [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
-* Visual Studio 2022 or 2026
-  * Desktop development with C++
 * Windows 11 or later
+
+<details>
+  <summary>Compiling from Source</summary>
+
+ * Visual Studio 2022 or 2026
+   * Desktop development with C++
+   * MSVC v143 or v145
+
+</details>
 
 ## Build Your Own Macro
 
@@ -37,7 +44,7 @@ pip install livia-python # -> import livia
 
 ## API
 
-Livia provides an easy-to-use API for creating automation macros. The following list is not exhaustive, but it covers the most commonly used APIs.
+Livia provides an easy-to-use API for creating automation macros. **The following list is not exhaustive**, but it covers the most commonly used APIs.
 
 See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's APIs can be used to implement common functionality in an application, including detecting Roblox disconnects and implementing auto-rejoin.
 
@@ -99,12 +106,14 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 <details>
   <summary>Click to expand</summary>
 
-| API                                       | Description                                                                      |
-| :---------------------------------------- | -------------------------------------------------------------------------------- |
-| `WindowUtils.ForceFocusWindow(...)`       | Forces the target application window to the foreground and brings it into focus. |
-| `SystemUtils.InitiateSystemShutdown(...)` | Requests a system shutdown with a specified timeout and display message.         |
-| `SystemUtils.AbortSystemShutdown(...)`    | Aborts a previously scheduled system shutdown request.                           |
-| `IpUtils.GetIpInfoAsync(...)`             | Retrieves information for a specified internet protocol address.                 |
+| API                                                    | Description                                                                            |
+| :----------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `WindowUtils.ForceFocusWindow(...)`                    | Forces the target application window to the foreground and brings it into focus.       |
+| `SystemUtils.InitiateSystemShutdown(...)`              | Requests a system shutdown with a specified timeout and display message.               |
+| `SystemUtils.AbortSystemShutdown(...)`                 | Aborts a previously scheduled system shutdown request.                                 |
+| `IpUtils.GetIpInfoAsync(...)`                          | Retrieves information for a specified internet protocol address.                       |
+| `BrowserUtils.GetCookieValue(...)`                     | Retrieves the decrypted value of a cookie stored in a browser.                         |
+| `RobloxServerUtils.GetPrivateServerJoinLinkAsync(...)` | Retrieves the invite link to a Roblox private server for an experience by server name. |
 
 </details>
 

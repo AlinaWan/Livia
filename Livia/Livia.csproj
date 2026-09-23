@@ -10,7 +10,7 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-    <AssemblyVersion>1.12.0.0</AssemblyVersion>
+    <AssemblyVersion>1.12.1.0</AssemblyVersion>
     <PackageVersion>$(AssemblyVersion)</PackageVersion>
 
     <PackageId>Livia</PackageId>

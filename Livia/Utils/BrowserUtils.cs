@@ -184,7 +184,21 @@ public static class BrowserUtils
             using var aesGcm = new AesGcm(masterKey, tag.Length);
             aesGcm.Decrypt(nonce, ciphertext, tag, plaintextBytes);
 
-            return Encoding.UTF8.GetString(plaintextBytes);
+            // Chromium cookie payloads may contain a 32-byte SHA-256 host-key hash
+            // before the actual cookie value. Remove that prefix before UTF-8 decoding
+            // or else we get garbage bytes before the actual value.
+            const int hostKeyHashLength = 32;
+
+            if (plaintextBytes.Length < hostKeyHashLength)
+            {
+                throw new CryptographicException(
+                    "Decrypted cookie payload is too short.");
+            }
+
+            return Encoding.UTF8.GetString(
+                plaintextBytes,
+                hostKeyHashLength,
+                plaintextBytes.Length - hostKeyHashLength);
         }
 
         throw new NotSupportedException("Unsupported cookie encryption scheme version.");

@@ -1,6 +1,6 @@
-# Release history
+## Release 1.12.0
 
-## Release 1.12.0 - 2026-09-22
+### New Rules
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|------

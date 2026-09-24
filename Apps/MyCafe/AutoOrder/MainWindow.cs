@@ -591,7 +591,7 @@ public sealed class MainWindow : CommonWindow
         }
 
         return await RobloxServerUtils.GetPrivateServerJoinLinkAsync(
-            "https://www.roblox.com/games/133345376331809",
+            "133345376331809",
             null,
             securityToken);
     }

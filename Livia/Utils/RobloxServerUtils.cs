@@ -1,141 +1,119 @@
 using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
-using PuppeteerSharp;
-using Windows.System;
+using Livia.Dtos.Roblox;
 
 namespace Livia.Utils;
 
 public static class RobloxServerUtils
 {
+    private static readonly HttpClient SharedClient = new();
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
     /// <summary>
-    /// Asynchronously authenticates with Roblox using a .ROBLOSECURITY cookie,
-    /// navigates to a game page, locates a private server by name (or the first
-    /// available if no name is specified), and retrieves its existing join link.
+    /// Asynchronously retrieves the existing join link for a private server
+    /// accessible to the authenticated Roblox user.
     /// </summary>
-    /// <param name="gameUrl">The full URL of the Roblox game.</param>
+    /// <param name="rootPlaceId">
+    /// The root place ID of the Roblox experience.
+    /// </param>
     /// <param name="serverName">
-    /// The display name of the target private server, or <c>null> to select the
-    /// first available configurable server.
+    /// The display name of the target private server, or <c>null</c> or empty
+    /// to select the first available private server.
     /// </param>
     /// <param name="robloxSecurityToken">
-    /// The valid .ROBLOSECURITY authentication cookie token.
+    /// The valid <c>.ROBLOSECURITY</c> authentication cookie token.
     /// </param>
     /// <returns>
-    /// The existing private server join link, or <c>null> if no matching server
-    /// is found or a join link has not been generated for that server.
+    /// The existing private server join link, or <c>null</c> if no matching
+    /// server is found or the server does not have a join link.
     /// </returns>
     /// <remarks>
-    /// This method does not generate a join link if one has not already been
-    /// generated.
+    /// This method uses Roblox's legacy web APIs and does not generate a new
+    /// join link if one has not already been generated.
     /// </remarks>
-    public static async Task<string?> GetPrivateServerJoinLinkAsync(string gameUrl, string? serverName, string robloxSecurityToken)
+    public static async Task<string?> GetPrivateServerJoinLinkAsync(string rootPlaceId, string? serverName, string robloxSecurityToken)
     {
-        await new BrowserFetcher().DownloadAsync();
-
-        using var browser = await Puppeteer.LaunchAsync(new LaunchOptions
+        if (string.IsNullOrWhiteSpace(robloxSecurityToken))
         {
-            Headless = true, // Set to false to debug
-            Args = new[] { "--disable-setuid-sandbox" }
-        });
-
-        using var page = await browser.NewPageAsync();
-        await page.SetViewportAsync(new ViewPortOptions { Width = 1280, Height = 900 });
-
-        // 1. Inject cookie
-        await page.SetCookieAsync(new CookieParam
-        {
-            Name = ".ROBLOSECURITY",
-            Value = robloxSecurityToken,
-            Domain = ".roblox.com",
-            Path = "/",
-            HttpOnly = true,
-            Secure = true
-        });
-
-        // 2. Validate session via /home
-        await page.GoToAsync("https://www.roblox.com/home", WaitUntilNavigation.Networkidle2);
-        if (page.Url.Contains("/Login", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new UnauthorizedAccessException("Invalid or expired .ROBLOSECURITY token (redirected to login).");
+            throw new ArgumentException("The .ROBLOSECURITY token cannot be null or empty.", nameof(robloxSecurityToken));
         }
 
-        // 3. Go to game page
-        await page.GoToAsync(gameUrl, WaitUntilNavigation.Networkidle2);
+        var client = SharedClient;
 
-        // 4. Click the "Servers" tab/button on the Roblox game page to trigger rendering of instances
-        try
-        {
-            await page.EvaluateExpressionAsync(@"
-                const tabs = Array.from(document.querySelectorAll('button, a, span'));
-                const serversTab = tabs.find(el => el.textContent.trim() === 'Servers' || el.textContent.trim() === 'Private Servers');
-                if (serversTab) {
-                    serversTab.click();
-                }
-            ");
+        // 2. Fetch the private server list endpoint for the place
+        string listUrl = $"https://games.roblox.com/v1/games/{rootPlaceId}/private-servers?cursor=&sortOrder=Desc&excludeFullGames=false";
 
-            // Wait for the running instances container to populate after clicking the tab
-            await page.WaitForSelectorAsync("#running-game-instances-container", new WaitForSelectorOptions { Timeout = 10000 });
-            await Task.Delay(3000); // Extra buffer for React hydration
-        }
-        catch
-        {
-            throw new Exception("Could not find or click the Servers tab on the Roblox game page.");
-        }
+        using var listRequest = new HttpRequestMessage(HttpMethod.Get, listUrl);
+        ConfigureRobloxHeaders(listRequest, robloxSecurityToken);
 
-        // 5. Scan elements either by name or grab the first available configure link if serverName is null/empty
-        string? configureHref = await page.EvaluateFunctionAsync<string?>(@"
-            (targetName) => {
-                const container = document.querySelector('#running-game-instances-container');
-                if (!container) return null;
-                
-                // If no name was provided, just return the very first configure link found in the container
-                if (!targetName || targetName.trim() === '') {
-                    const firstConfigLink = container.querySelector('a[aria-label=""Configure""], a[href*=""private-server/configure""]');
-                    return firstConfigLink ? firstConfigLink.getAttribute('href') : null;
-                }
-
-                // Otherwise, search by the specified server name
-                const spans = container.querySelectorAll('span');
-                for (const span of spans) {
-                    if (span.textContent.trim().toLowerCase() === targetName.toLowerCase()) {
-                        let parent = span.parentElement;
-                        while (parent && parent !== container) {
-                            const configLink = parent.querySelector('a[aria-label=""Configure""], a[href*=""private-server/configure""]');
-                            if (configLink) {
-                                return configLink.getAttribute('href');
-                            }
-                            parent = parent.parentElement;
-                        }
-                    }
-                }
-                return null;
-            }
-        ", serverName);
-
-        if (string.IsNullOrEmpty(configureHref))
+        using var listResponse = await client.SendAsync(listRequest).ConfigureAwait(false);
+        if (!listResponse.IsSuccessStatusCode)
         {
             return null;
         }
 
-        if (configureHref.StartsWith("/"))
+        using var listStream = await listResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
+        var listResult = await JsonSerializer.DeserializeAsync<VipServerListResponseDto>(listStream, JsonOptions).ConfigureAwait(false);
+
+        if (listResult?.Data == null || listResult.Data.Count == 0)
         {
-            var uri = new Uri(gameUrl);
-            configureHref = $"{uri.Scheme}://{uri.Host}{configureHref}";
+            return null;
         }
 
-        // 6. Navigate to configuration page
-        await page.GoToAsync(configureHref, WaitUntilNavigation.Networkidle2);
-        await page.WaitForSelectorAsync("input#join-link", new WaitForSelectorOptions { Timeout = 10000 });
+        long? targetServerId = null;
 
-        // 7. Pull the join link value
-        string? joinLink = await page.EvaluateFunctionAsync<string?>(@"() => {
-            const input = document.querySelector('input#join-link');
-            if (!input || !input.value || input.value.trim() === '') {
-                return null;
+        // 3. Scan list either by name or grab the first available server if serverName is null/empty
+        if (string.IsNullOrWhiteSpace(serverName))
+        {
+            targetServerId = listResult.Data[0].VipServerId;
+        }
+        else
+        {
+            foreach (var server in listResult.Data)
+            {
+                if (string.Equals(server.Name, serverName.Trim(), StringComparison.OrdinalIgnoreCase))
+                {
+                    targetServerId = server.VipServerId;
+                    break;
+                }
             }
-            return input.value;
-        }");
+        }
 
-        return joinLink;
+        if (targetServerId == null)
+        {
+            return null;
+        }
+
+        // 4. Query the specific VIP server details endpoint using its ID to retrieve the join link
+        string detailUrl = $"https://games.roblox.com/v1/vip-servers/{targetServerId.Value}";
+        using var detailRequest = new HttpRequestMessage(HttpMethod.Get, detailUrl);
+        ConfigureRobloxHeaders(detailRequest, robloxSecurityToken);
+
+        using var detailResponse = await client.SendAsync(detailRequest).ConfigureAwait(false);
+        if (!detailResponse.IsSuccessStatusCode)
+        {
+            return null;
+        }
+
+        using var detailStream = await detailResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
+        var detailResult = await JsonSerializer.DeserializeAsync<VipServerResponseDto>(detailStream, JsonOptions).ConfigureAwait(false);
+
+        return detailResult?.Link;
+    }
+
+    private static void ConfigureRobloxHeaders(HttpRequestMessage request, string token)
+    {
+        request.Headers.Add("Cookie", $".ROBLOSECURITY={token.Trim()}");
+        request.Headers.Add("Origin", "https://www.roblox.com");
+        request.Headers.Add("Referer", "https://www.roblox.com/");
+        request.Headers.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36");
     }
 }

@@ -8,12 +8,12 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-		<AssemblyVersion>1.0.0.1</AssemblyVersion>
+		<AssemblyVersion>1.0.0.2</AssemblyVersion>
 		<ApplicationIcon>..\..\..\Livia\Assets\KaarinaaIcon.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\Livia\Livia.csproj" />
+		<PackageReference Include="Livia" Version="1.14.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

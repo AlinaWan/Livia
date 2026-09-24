@@ -9,13 +9,13 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <LiviaEnableBrowserCookieDecryption>true</LiviaEnableBrowserCookieDecryption>
 
-    <AssemblyVersion>2.3.0.0</AssemblyVersion>
+    <AssemblyVersion>2.3.0.1</AssemblyVersion>
       <ApplicationIcon>..\..\..\Livia\Assets\KaarinaaIcon.ico</ApplicationIcon>
       <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Livia\Livia.csproj" />
+	  <PackageReference Include="Livia" Version="1.14.0.0" />
   </ItemGroup>
 
   <ItemGroup>

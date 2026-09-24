@@ -85,7 +85,7 @@ public sealed class RequiresLiviaOptInAnalyzer : DiagnosticAnalyzer
 
             var propertyName = $"LiviaEnable{enumMember.Name}";
 
-            if (propertyName is null)
+            if (IsLiviaAssembly(context, method))
             {
                 return;
             }
@@ -120,5 +120,19 @@ public sealed class RequiresLiviaOptInAnalyzer : DiagnosticAnalyzer
                    value,
                    "true",
                    StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsLiviaAssembly(
+        OperationAnalysisContext context,
+        IMethodSymbol method)
+    {
+        var containingSymbol =
+            context.Operation.SemanticModel?.GetEnclosingSymbol(
+                context.Operation.Syntax.SpanStart);
+
+        return containingSymbol is not null &&
+               SymbolEqualityComparer.Default.Equals(
+                   containingSymbol.ContainingAssembly,
+                   method.ContainingAssembly);
     }
 }

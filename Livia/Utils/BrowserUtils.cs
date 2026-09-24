@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using Livia.Attributes;
 using Microsoft.Data.Sqlite;
+using Microsoft.Win32;
 
 namespace Livia.Utils;
 
@@ -133,6 +134,31 @@ public static class BrowserUtils
         return null;
     }
 
+    /// <inheritdoc cref="GetCookieValue(string, string, string)"/>
+    /// <param name="browser">The browser enum type.</param>
+    /// <param name="hostName">The target domain/host for the cookie (e.g., ".example.com").</param>
+    /// <param name="cookieName">The specific name of the cookie.</param>
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+    [RequiresLiviaOptIn(LiviaOptIn.BrowserCookieDecryption)]
+    public static string? GetCookieValue(Browser browser, string hostName, string cookieName)
+    {
+        string? browserPath = GetUserDataPath(browser);
+        if (string.IsNullOrEmpty(browserPath))
+        {
+            throw new ArgumentException("Invalid or unsupported browser specified.", nameof(browser));
+        }
+
+        return GetCookieValue(browserPath, hostName, cookieName);
+    }
+
+    /// <inheritdoc cref="GetCookieValue(Browser, string, string)"/>
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+    [RequiresLiviaOptIn(LiviaOptIn.BrowserCookieDecryption)]
+    public static string? GetCookieValue(string hostName, string cookieName)
+    {
+        return GetCookieValue(GetDefaultBrowser(), hostName, cookieName);
+    }
+
     /// <summary>
     /// Reads and decrypts the browser's AES master key from the Local State JSON configuration file using Windows DPAPI.
     /// </summary>
@@ -202,5 +228,63 @@ public static class BrowserUtils
         }
 
         throw new NotSupportedException("Unsupported cookie encryption scheme version.");
+    }
+
+    private static string? GetUserDataPath(Browser browser)
+    {
+        return browser switch
+        {
+            Browser.Chrome =>
+                Path.Combine("Google", "Chrome"),
+
+            Browser.ChromeForTesting =>
+                Path.Combine("Google", "Chrome for Testing"),
+
+            Browser.Vivaldi =>
+                Path.Combine("Vivaldi"),
+
+            Browser.Brave =>
+                Path.Combine("BraveSoftware", "Brave-Browser"),
+
+            Browser.Edge =>
+                Path.Combine("Microsoft", "Edge"),
+
+            _ => null
+        };
+    }
+
+    public static Browser GetDefaultBrowser()
+    {
+        string? progId =
+            GetUserChoiceProgId("https") ??
+            GetUserChoiceProgId("http");
+
+        if (progId is null)
+            return Browser.Unknown;
+
+        if (progId.StartsWith("VivaldiHTM", StringComparison.OrdinalIgnoreCase))
+            return Browser.Vivaldi;
+
+        if (progId.StartsWith("ChromeHTML", StringComparison.OrdinalIgnoreCase))
+            return Browser.Chrome;
+
+        if (progId.StartsWith("CfTHTML", StringComparison.OrdinalIgnoreCase))
+            return Browser.ChromeForTesting;
+
+        if (progId.StartsWith("BraveHTML", StringComparison.OrdinalIgnoreCase))
+            return Browser.Brave;
+
+        if (progId.StartsWith("MSEdgeHTM", StringComparison.OrdinalIgnoreCase))
+            return Browser.Edge;
+
+        return Browser.Unknown;
+    }
+
+    private static string? GetUserChoiceProgId(string protocol)
+    {
+        using RegistryKey? key = Registry.CurrentUser.OpenSubKey(
+            $@"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\{protocol}\UserChoice");
+
+        return key?.GetValue("ProgId") as string;
     }
 }

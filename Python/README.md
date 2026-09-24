@@ -29,20 +29,16 @@ import livia
 print(livia.WindowUtils)
 ````
 
-Livia APIs that accept .NET-specific types require the corresponding Python.NET type.
-For example, `WindowUtils.ForceFocusWindow` accepts a `System.IntPtr` because an
-HWND is represented by `IntPtr` in the .NET API.
+For example, force focusing a window:
 
 ```python
 import livia
 
-from System import IntPtr
-
-hwnd = IntPtr(12345678)
+hwnd = 12345678
 
 if livia.WindowUtils.ForceFocusWindow(hwnd):
     print("Window focused")
 ```
 
 The Python package uses [Python.NET](https://pythonnet.github.io/) to expose the
-underlying .NET APIs.
+underlying .NET APIs and .NET-specific types.

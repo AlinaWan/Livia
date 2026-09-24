@@ -17,4 +17,9 @@ public static class WindowUtils
 
         return User32.SetForegroundWindow(hwnd);
     }
+
+    public static bool ForceFocusWindow(long hwnd)
+    {
+        return ForceFocusWindow((IntPtr)hwnd);
+    }
 }

@@ -14,7 +14,7 @@ Some Livia APIs require explicit developer opt-in because they may have addition
 #### Diagnostic
 
 ```text
-LIVIA001: The API '...' requires explicit opt-in. Set '...' to 'true' in the project file.
+LIVIA001 The API 'GetCookieValue' requires explicit opt-in. Set 'LiviaEnableBrowserCookieDecryption' to 'true' in the project file.
 ````
 
 #### Why am I seeing this?

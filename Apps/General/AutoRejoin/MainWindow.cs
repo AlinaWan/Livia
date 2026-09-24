@@ -79,8 +79,8 @@ public sealed class MainWindow : CommonWindow
     {
         return new CommonWindowOptions
         {
-            Title = "General | Auto-Rejoin",
-            Header = "Auto-Rejoin",
+            Title = "General | Auto Rejoin",
+            Header = "Auto Rejoin",
             HeaderIcon = "🔄",
             Author = "by angelina",
 

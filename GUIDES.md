@@ -207,25 +207,29 @@ Applications can automatically fetch a private server join link by retrieving th
 First, extract the token using `BrowserUtils`. Note that this requires **elevated privileges** and the MSBuild property `LiviaEnableBrowserCookieDecryption` to be set to `true` to successfully access the browser's protected local state and files:
 
 ```csharp
-string? robloxSecurityToken = BrowserUtils.GetCookieValue(
-    "Google\\Chrome", 
-    ".roblox.com", 
-    ".ROBLOSECURITY");
+var securityToken = await Task.Run(() =>
+    BrowserUtils.GetCookieValue(".roblox.com", ".ROBLOSECURITY")
+);
 ```
 
 Once the token is available, pass it into `RobloxServerUtils` along with the game URL and target server name (or pass `null` to automatically select the first available configurable server):
 
 ```csharp
-string gameUrl = "https://www.roblox.com/games/123456789";
-string serverName = "JaneDoe's server"; // Optional: pass null for the first available
+if (string.IsNullOrEmpty(securityToken))
+{
+    return null;
+}
 
-string? joinLink = await RobloxServerUtils.GetPrivateServerJoinLinkAsync(
-    gameUrl, 
-    serverName, 
-    robloxSecurityToken);
+return await RobloxServerUtils.GetPrivateServerJoinLinkAsync(
+    "https://www.roblox.com/games/1234567890",
+    null,
+    securityToken
+);
 ```
 
 *(Note: If the private server link has never been generated before on Roblox, the returned join link will be `null`.)*
+
+This is particularly useful for automatically retrieving a private server link for auto-rejoin features.
 
 ---
 

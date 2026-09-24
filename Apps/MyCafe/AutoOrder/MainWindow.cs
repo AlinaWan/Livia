@@ -318,14 +318,10 @@ public sealed class MainWindow : CommonWindow
                 Theme));
 
         stack.Children.Add(
-            CommonStringInput.CreateRow(
+            CommonActionInput.CreateRow(
                 "Rejoin URL:",
                 _rejoinUrl,
-                value =>
-                {
-                    _rejoinUrl = value;
-                    Log($"Rejoin URL set to: {_rejoinUrl}");
-                },
+                GetRejoinURL,
                 Theme));
 
         tab.Content = stack;
@@ -582,6 +578,23 @@ public sealed class MainWindow : CommonWindow
     // -------------------------------------------------------------------------
     // Event Handlers
     // -------------------------------------------------------------------------
+    private async Task<string?> GetRejoinURL()
+    {
+        var securityToken = await Task.Run(() =>
+            BrowserUtils.GetCookieValue(
+                ".roblox.com",
+                ".ROBLOSECURITY"));
+
+        if (string.IsNullOrEmpty(securityToken))
+        {
+            return null;
+        }
+
+        return await RobloxServerUtils.GetPrivateServerJoinLinkAsync(
+            "https://www.roblox.com/games/133345376331809",
+            null,
+            securityToken);
+    }
 
     private void OnTargetWindowUnfocused(object? sender, EventArgs e)
     {

@@ -58,6 +58,7 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 | `CommonTab.Create(...)`                | Creates a new tab in the UI.                       |
 | `CommonIntegerInput.CreateRow(...)`    | Creates a new row with an integer input box.       |
 | `CommonStringInput.CreateRow(...)`     | Creates a new row with a string input box.         |
+| `CommonActionInput.CreateRow(...)`     | Creates a new row with a button and input box.     |
 | `CommonToggle.CreateRow(...)`          | Creates a new row with a toggle switch.            |
 | `CommonSegmentedToggle.CreateRow(...)` | Creates a new row with a segmented toggle switch.  |
 | `CommonHelpStep.Create(...)`           | Creates a new help step with a number and content. |

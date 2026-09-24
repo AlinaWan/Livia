@@ -221,7 +221,7 @@ if (string.IsNullOrEmpty(securityToken))
 }
 
 return await RobloxServerUtils.GetPrivateServerJoinLinkAsync(
-    "https://www.roblox.com/games/1234567890",
+    "1234567890",
     null,
     securityToken
 );

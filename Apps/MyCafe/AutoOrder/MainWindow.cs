@@ -581,27 +581,37 @@ public sealed class MainWindow : CommonWindow
     // -------------------------------------------------------------------------
     private async Task<string?> GetRejoinURL()
     {
-        // Just use the public server URI if we're not running elevated
-        if (!SystemUtils.IsInRole(WindowsBuiltInRole.Administrator))
+        const string placeId = "133345376331809";
+        const string publicServerUrl = $"roblox://placeId={placeId}";
+
+        try
         {
-            return "roblox://placeId=133345376331809";
+            // Just use the public server URI if we're not running elevated
+            if (!SystemUtils.IsInRole(WindowsBuiltInRole.Administrator))
+            {
+                return publicServerUrl;
+            }
+
+            // Else, get our first available private server link
+            var securityToken = await Task.Run(() =>
+                BrowserUtils.GetCookieValue(
+                    ".roblox.com",
+                    ".ROBLOSECURITY"));
+
+            if (string.IsNullOrEmpty(securityToken))
+            {
+                return publicServerUrl;
+            }
+
+            return await RobloxServerUtils.GetPrivateServerJoinLinkAsync(
+                placeId,
+                null,
+                securityToken);
         }
-
-        // Else, get our first available private server link
-        var securityToken = await Task.Run(() =>
-            BrowserUtils.GetCookieValue(
-                ".roblox.com",
-                ".ROBLOSECURITY"));
-
-        if (string.IsNullOrEmpty(securityToken))
+        catch
         {
-            return null;
+            return publicServerUrl;
         }
-
-        return await RobloxServerUtils.GetPrivateServerJoinLinkAsync(
-            "133345376331809",
-            null,
-            securityToken);
     }
 
     private void OnTargetWindowUnfocused(object? sender, EventArgs e)

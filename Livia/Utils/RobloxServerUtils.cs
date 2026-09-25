@@ -196,9 +196,9 @@ public static class RobloxServerUtils
     /// <returns>
     /// The newly generated private server join link, or <c>null</c> if the request fails or the server is not found.
     /// </returns>
-    public static async Task<string?> RegeneratePrivateServerLinkAsync(string rootPlaceId, string? serverName, string robloxSecurityToken)
+    private static async Task<string?> GeneratePrivateServerLinkAsync(string rootPlaceId, string? serverName, string robloxSecurityToken)
     {
-        long? targetServerId = await GetPrivateServerIdAsync(rootPlaceId, serverName, robloxSecurityToken).ConfigureAwait(false);
+        long ? targetServerId = await GetPrivateServerIdAsync(rootPlaceId, serverName, robloxSecurityToken).ConfigureAwait(false);
         if (targetServerId == null)
         {
             return null;
@@ -211,6 +211,7 @@ public static class RobloxServerUtils
             Content = JsonContent.Create(new { newJoinCode = true })
         };
 
+        // TODO: 2026-09-25: Implement X-Csrf-Token and attach it to the request headers, then change method visibility to public
         RobloxRequestUtils.ConfigureRobloxHeaders(patchRequest, robloxSecurityToken);
 
         using var patchResponse = await SharedClient.SendAsync(patchRequest).ConfigureAwait(false);

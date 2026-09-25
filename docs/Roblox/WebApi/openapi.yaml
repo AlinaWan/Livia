@@ -1,0 +1,35 @@
+openapi: 3.1.0
+
+info:
+  title: Livia | Roblox Web API
+  version: 1.0.0
+  description: Discovered and observed Roblox web API endpoints.
+
+servers:
+  - url: https://games.roblox.com
+  - url: https://apis.roblox.com
+
+tags:
+  - name: Games
+  - name: VIP Servers
+
+paths:
+  /v1/vip-servers/{serverId}:
+    servers:
+      - url: https://games.roblox.com
+    $ref: ./vip-servers/vip-servers.yaml
+
+  /v1/games/{rootPlaceId}/servers/Public:
+    servers:
+      - url: https://games.roblox.com
+    $ref: ./games/servers-public.yaml
+
+  /v1/games/{rootPlaceId}/servers/Friend:
+    servers:
+      - url: https://games.roblox.com
+    $ref: ./games/servers-friend.yaml
+
+  /v1/games/{rootPlaceId}/private-servers:
+    servers:
+      - url: https://games.roblox.com
+    $ref: ./games/private-servers.yaml

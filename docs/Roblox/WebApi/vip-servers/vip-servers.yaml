@@ -1,0 +1,446 @@
+get:
+  tags:
+    - VIP Servers
+  summary: Get VIP server details
+  description: |
+    Returns information about a Roblox VIP server.
+
+    This endpoint was observed at:
+    GET https://games.roblox.com/v1/vip-servers/{serverId}
+
+  parameters:
+    - name: serverId
+      in: path
+      required: true
+      description: The ID of the VIP server.
+      schema:
+        type: integer
+        format: int64
+      example: 4239733920
+    - name: Cookie
+      in: header
+      required: true
+      schema:
+        type: string
+      example: '_|WARNING:-DO-NOT-SHARE-THIS.'
+    - name: X-Bound-Auth-Token
+      in: header
+      required: false
+      schema:
+        type: string
+      example: 'v1|47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='
+
+  responses:
+    "200":
+      description: Successfully retrieved the VIP server.
+      headers:
+        Roblox-Machine-Id:
+          schema:
+            type: string
+            example: 'e17f2ef7-004e-4811-8ac9-519d447cbc2c'
+        X-Ratelimit-Limit:
+          schema:
+            type: string
+            example: '3, 15;w=1, 3;w=1'
+        X-Ratelimit-Remaining:
+          schema:
+            type: integer
+            example: 2
+        X-Ratelimit-Reset:
+          schema:
+            type: integer
+            example: 1
+        X-Roblox-Edge:
+          schema:
+            type: string
+        X-Terms-Message:
+          schema:
+            type: string
+            example: 'Terms apply https://rblx.co/TOU.'
+
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+
+              name:
+                type: string
+
+              game:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+                  name:
+                    type: string
+                  rootPlace:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+                      name:
+                        type: string
+                    required:
+                      - id
+                      - name
+                required:
+                  - id
+                  - name
+                  - rootPlace
+
+              joinCode:
+                type: string
+
+              active:
+                type: boolean
+
+              subscription:
+                type: object
+                properties:
+                  active:
+                    type: boolean
+                  expired:
+                    type: boolean
+                  expirationDate:
+                    type: string
+                    format: date-time
+                  price:
+                    type: integer
+                  canRenew:
+                    type: boolean
+                  hasInsufficientFunds:
+                    type: boolean
+                  hasRecurringProfile:
+                    type: boolean
+                  hasPriceChanged:
+                    type: boolean
+                  purchaseScheduleId:
+                    nullable: true
+                  totalDiscountAmountInRobux:
+                    nullable: true
+                  metadata:
+                    type: object
+                    properties:
+                      privateServerSubscriptionTags:
+                        type: array
+                        items: {}
+                    required:
+                      - privateServerSubscriptionTags
+                required:
+                  - active
+                  - expired
+                  - expirationDate
+                  - price
+                  - canRenew
+                  - hasInsufficientFunds
+                  - hasRecurringProfile
+                  - hasPriceChanged
+                  - purchaseScheduleId
+                  - totalDiscountAmountInRobux
+                  - metadata
+
+              permissions:
+                type: object
+                properties:
+                  clanAllowed:
+                    type: boolean
+                  enemyClanId:
+                    nullable: true
+                  friendsAllowed:
+                    type: boolean
+                  users:
+                    type: array
+                    items: {}
+                required:
+                  - clanAllowed
+                  - enemyClanId
+                  - friendsAllowed
+                  - users
+
+              voiceSettings:
+                type: object
+                properties:
+                  enabled:
+                    type: boolean
+                required:
+                  - enabled
+
+              link:
+                type: string
+                format: uri
+
+            required:
+              - id
+              - name
+              - game
+              - joinCode
+              - active
+              - subscription
+              - permissions
+              - voiceSettings
+              - link
+
+          example:
+            id: 1234567890
+            name: "JaneDoe's server"
+            game:
+              id: 1234567890
+              name: "Happy House"
+              rootPlace:
+                id: 1234567890
+                name: "Happy House"
+            joinCode: "1234567890"
+            active: true
+            subscription:
+              active: false
+              expired: false
+              expirationDate: "2126-01-01T00:00:00.00Z"
+              price: 0
+              canRenew: false
+              hasInsufficientFunds: false
+              hasRecurringProfile: false
+              hasPriceChanged: false
+              purchaseScheduleId: null
+              totalDiscountAmountInRobux: null
+              metadata:
+                privateServerSubscriptionTags: []
+            permissions:
+              clanAllowed: false
+              enemyClanId: null
+              friendsAllowed: false
+              users: []
+            voiceSettings:
+              enabled: false
+            link: "https://www.roblox.com/share?code=1a2b3c4d5e6f&type=Server"
+
+patch:
+  summary: Generate VIP server link
+  tags:
+    - VIP Servers
+  description: |
+    Generates the Private Server Link of a Roblox VIP server.
+
+    This endpoint was observed at:
+    PATCH https://games.roblox.com/v1/vip-servers/{serverId}
+
+  parameters:
+    - name: serverId
+      in: path
+      required: true
+      description: The ID of the VIP server.
+      schema:
+        type: integer
+        format: int64
+      example: 4239733920
+    - name: Cookie
+      in: header
+      required: true
+      schema:
+        type: string
+      example: '_|WARNING:-DO-NOT-SHARE-THIS.'
+    - name: X-Bound-Auth-Token
+      in: header
+      required: false
+      schema:
+        type: string
+      example: 'v1|47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='
+    - name: X-Csrf-Token
+      in: header
+      required: true
+      schema:
+        type: string
+
+  responses:
+    "200":
+      description: Successfully generated VIP server link.
+      headers:
+        Roblox-Machine-Id:
+          schema:
+            type: string
+            example: 'e17f2ef7-004e-4811-8ac9-519d447cbc2c'
+        X-Ratelimit-Limit:
+          schema:
+            type: string
+            example: '3, 15;w=1, 3;w=1'
+        X-Ratelimit-Remaining:
+          schema:
+            type: integer
+            example: 2
+        X-Ratelimit-Reset:
+          schema:
+            type: integer
+            example: 1
+        X-Roblox-Edge:
+          schema:
+            type: string
+        X-Terms-Message:
+          schema:
+            type: string
+            example: 'Terms apply https://rblx.co/TOU.'
+
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+
+              name:
+                type: string
+
+              game:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+                  name:
+                    type: string
+                  rootPlace:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+                      name:
+                        type: string
+                    required:
+                      - id
+                      - name
+                required:
+                  - id
+                  - name
+                  - rootPlace
+
+              joinCode:
+                type: string
+
+              active:
+                type: boolean
+
+              subscription:
+                type: object
+                properties:
+                  active:
+                    type: boolean
+                  expired:
+                    type: boolean
+                  expirationDate:
+                    type: string
+                    format: date-time
+                  price:
+                    type: integer
+                  canRenew:
+                    type: boolean
+                  hasInsufficientFunds:
+                    type: boolean
+                  hasRecurringProfile:
+                    type: boolean
+                  hasPriceChanged:
+                    type: boolean
+                  purchaseScheduleId:
+                    nullable: true
+                  totalDiscountAmountInRobux:
+                    nullable: true
+                  metadata:
+                    type: object
+                    properties:
+                      privateServerSubscriptionTags:
+                        type: array
+                        items: {}
+                    required:
+                      - privateServerSubscriptionTags
+                required:
+                  - active
+                  - expired
+                  - expirationDate
+                  - price
+                  - canRenew
+                  - hasInsufficientFunds
+                  - hasRecurringProfile
+                  - hasPriceChanged
+                  - purchaseScheduleId
+                  - totalDiscountAmountInRobux
+                  - metadata
+
+              permissions:
+                type: object
+                properties:
+                  clanAllowed:
+                    type: boolean
+                  enemyClanId:
+                    nullable: true
+                  friendsAllowed:
+                    type: boolean
+                  users:
+                    type: array
+                    items: {}
+                required:
+                  - clanAllowed
+                  - enemyClanId
+                  - friendsAllowed
+                  - users
+
+              voiceSettings:
+                type: object
+                properties:
+                  enabled:
+                    type: boolean
+                required:
+                  - enabled
+
+              link:
+                type: string
+                format: uri
+
+            required:
+              - id
+              - name
+              - game
+              - joinCode
+              - active
+              - subscription
+              - permissions
+              - voiceSettings
+              - link
+
+          example:
+            id: 1234567890
+            name: "Jane Doe's server"
+            game:
+              id: 1234567890
+              name: "Happy House"
+              rootPlace:
+                id: 1234567890
+                name: "Happy House"
+            joinCode: "1234567890"
+            active: true
+            subscription:
+              active: false
+              expired: false
+              expirationDate: "2126-01-01T00:00:00.00Z"
+              price: 0
+              canRenew: false
+              hasInsufficientFunds: false
+              hasRecurringProfile: false
+              hasPriceChanged: false
+              purchaseScheduleId: null
+              totalDiscountAmountInRobux: null
+              metadata:
+                privateServerSubscriptionTags: []
+            permissions:
+              clanAllowed: false
+              enemyClanId: null
+              friendsAllowed: false
+              users: []
+            voiceSettings:
+              enabled: false
+            link: "https://www.roblox.com/share?code=1a2b3c4d5e6f&type=Server"

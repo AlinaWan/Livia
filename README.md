@@ -119,7 +119,7 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 | `RobloxServerUtils.GetAllPrivateServerDetailsAsync(...)`  | Retrieves detailed information for all accessible Roblox private servers for an experience. |
 | `RobloxServerUtils.GetPrivateServerIdAsync(...)`          | Retrieves the ID of a Roblox private server for an experience by server name.               |
 | `RobloxServerUtils.GetPrivateServerJoinLinkAsync(...)`    | Retrieves the invite link of a Roblox private server for an experience by server name.      |
-| `RobloxServerUtils.RegeneratePrivateServerLinkAsync(...)` | Regenerates the invite link of a Roblox private server for an experience by server name.    |
+| `RobloxServerUtils.GeneratePrivateServerLinkAsync(...)` | Regenerates the invite link of a Roblox private server for an experience by server name.    |
 
 </details>
 

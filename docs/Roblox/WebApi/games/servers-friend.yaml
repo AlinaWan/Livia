@@ -1,0 +1,170 @@
+get:
+  tags:
+    - Games
+  summary: Get friend servers
+  description: |
+    Returns servers associated with friends for a Roblox experience.
+
+    This endpoint was observed at:
+    GET https://games.roblox.com/v1/games/{rootPlaceId}/servers/Friend
+
+  parameters:
+    - name: rootPlaceId
+      in: path
+      required: true
+      description: The root place ID of the experience.
+      schema:
+        type: integer
+        format: int64
+      example: 1234567890
+
+    - name: cursor
+      in: query
+      required: false
+      description: Pagination cursor.
+      schema:
+        type: string
+      example: ""
+
+    - name: sortOrder
+      in: query
+      required: false
+      description: The sort order for the returned servers.
+      schema:
+        type: string
+      example: Desc
+
+    - name: excludeFullGames
+      in: query
+      required: false
+      description: Whether full servers should be excluded.
+      schema:
+        type: boolean
+      example: false
+
+    - name: Cookie
+      in: header
+      required: true
+      schema:
+        type: string
+      example: '_|WARNING:-DO-NOT-SHARE-THIS.'
+
+    - name: X-Bound-Auth-Token
+      in: header
+      required: false
+      schema:
+        type: string
+      example: 'v1|47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='
+
+  responses:
+    "200":
+      description: Successfully retrieved friend servers.
+      headers:
+        Roblox-Machine-Id:
+          schema:
+            type: string
+            example: 'e17f2ef7-004e-4811-8ac9-519d447cbc2c'
+        X-Ratelimit-Limit:
+          schema:
+            type: string
+            example: '3, 15;w=1, 3;w=1'
+        X-Ratelimit-Remaining:
+          schema:
+            type: integer
+            example: 2
+        X-Ratelimit-Reset:
+          schema:
+            type: integer
+            example: 1
+        X-Roblox-Edge:
+          schema:
+            type: string
+        X-Terms-Message:
+          schema:
+            type: string
+            example: 'Terms apply https://rblx.co/TOU.'
+
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              previousPageCursor:
+                nullable: true
+                type: string
+
+              nextPageCursor:
+                nullable: true
+                type: string
+
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    maxPlayers:
+                      type: integer
+                    playing:
+                      type: integer
+                    playerTokens:
+                      type: array
+                      items:
+                        type: string
+                    players:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            format: int64
+                          name:
+                            type: string
+                          displayName:
+                            type: string
+                          playerToken:
+                            type: string
+                        required:
+                          - id
+                          - name
+                          - displayName
+                          - playerToken
+                    fps:
+                      type: number
+                      format: double
+                    ping:
+                      type: integer
+
+                  required:
+                    - id
+                    - maxPlayers
+                    - playing
+                    - playerTokens
+                    - players
+                    - fps
+                    - ping
+
+            required:
+              - previousPageCursor
+              - nextPageCursor
+              - data
+
+          example:
+            previousPageCursor: null
+            nextPageCursor: null
+            data:
+              - id: "2c3b37c8-cc0c-4c41-94a7-a59b89f5cb8a"
+                maxPlayers: 5
+                playing: 3
+                playerTokens:
+                  - "A1B2C3D4E5F6A1B2C3D4E5F6"
+                players:
+                  - id: 1234567890
+                    name: "JaneDoe"
+                    displayName: "Jane"
+                    playerToken: "A1B2C3D4E5F6A1B2C3D4E5F6"
+                fps: 59.972466
+                ping: 179

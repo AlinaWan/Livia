@@ -14,20 +14,44 @@ public class VipServerResponseDto
     [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
 
+    [JsonPropertyName("game")]
+    public VipServerGameInfo? Game
+    {
+        get; set;
+    }
+
     [JsonPropertyName("joinCode")]
     public string? JoinCode
     {
         get; set;
     }
 
-    [JsonPropertyName("link")]
-    public string? Link
+    [JsonPropertyName("active")]
+    public bool Active
     {
         get; set;
     }
 
-    [JsonPropertyName("active")]
-    public bool Active
+    [JsonPropertyName("subscription")]
+    public VipServerSubscription? Subscription
+    {
+        get; set;
+    }
+
+    [JsonPropertyName("permissions")]
+    public VipServerPermissions? Permissions
+    {
+        get; set;
+    }
+
+    [JsonPropertyName("voiceSettings")]
+    public VipServerVoiceSettings? VoiceSettings
+    {
+        get; set;
+    }
+
+    [JsonPropertyName("link")]
+    public string? Link
     {
         get; set;
     }

@@ -21,7 +21,7 @@ public class VipServerInstanceDto
     }
 
     [JsonPropertyName("owner")]
-    public VipOwnerDto? Owner
+    public VipServerOwnerDto? Owner
     {
         get; set;
     }

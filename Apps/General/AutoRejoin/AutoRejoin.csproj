@@ -13,7 +13,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Livia" Version="1.15.0.0" />
+		<PackageReference Include="Livia" Version="1.16.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

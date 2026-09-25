@@ -107,14 +107,19 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 <details>
   <summary>Click to expand</summary>
 
-| API                                                    | Description                                                                            |
-| :----------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `WindowUtils.ForceFocusWindow(...)`                    | Forces the target application window to the foreground and brings it into focus.       |
-| `SystemUtils.InitiateSystemShutdown(...)`              | Requests a system shutdown with a specified timeout and display message.               |
-| `SystemUtils.AbortSystemShutdown(...)`                 | Aborts a previously scheduled system shutdown request.                                 |
-| `IpUtils.GetIpInfoAsync(...)`                          | Retrieves information for a specified internet protocol address.                       |
-| `BrowserUtils.GetCookieValue(...)`                     | Retrieves the decrypted value of a cookie stored in a browser.                         |
-| `RobloxServerUtils.GetPrivateServerJoinLinkAsync(...)` | Retrieves the invite link to a Roblox private server for an experience by server name. |
+| API                                                       | Description                                                                                 |
+| :-------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `WindowUtils.ForceFocusWindow(...)`                       | Forces the target application window to the foreground and brings it into focus.            |
+| `SystemUtils.InitiateSystemShutdown(...)`                 | Requests a system shutdown with a specified timeout and display message.                    |
+| `SystemUtils.AbortSystemShutdown(...)`                    | Aborts a previously scheduled system shutdown request.                                      |
+| `NetworkUtils.SetRadioStateAsync(...)`                    | Requests a change to the operational state of a specified radio kind.                       |
+| `NetworkUtils.GetRadioStateAsync(...)`                    | Gets the current operational state of a specified radio kind.                               |
+| `IpUtils.GetIpInfoAsync(...)`                             | Retrieves information for a specified internet protocol address.                            |
+| `BrowserUtils.GetCookieValue(...)`                        | Retrieves the decrypted value of a cookie stored in a browser.                              |
+| `RobloxServerUtils.GetAllPrivateServerDetailsAsync(...)`  | Retrieves detailed information for all accessible Roblox private servers for an experience. |
+| `RobloxServerUtils.GetPrivateServerIdAsync(...)`          | Retrieves the ID of a Roblox private server for an experience by server name.               |
+| `RobloxServerUtils.GetPrivateServerJoinLinkAsync(...)`    | Retrieves the invite link of a Roblox private server for an experience by server name.      |
+| `RobloxServerUtils.RegeneratePrivateServerLinkAsync(...)` | Regenerates the invite link of a Roblox private server for an experience by server name.    |
 
 </details>
 

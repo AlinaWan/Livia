@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -580,6 +581,13 @@ public sealed class MainWindow : CommonWindow
     // -------------------------------------------------------------------------
     private async Task<string?> GetRejoinURL()
     {
+        // Just use the public server URI if we're not running elevated
+        if (!SystemUtils.IsInRole(WindowsBuiltInRole.Administrator))
+        {
+            return "roblox://placeId=133345376331809";
+        }
+
+        // Else, get our first available private server link
         var securityToken = await Task.Run(() =>
             BrowserUtils.GetCookieValue(
                 ".roblox.com",

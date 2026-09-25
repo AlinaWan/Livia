@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Principal;
 using Livia.Native;
 
 namespace Livia.Utils;
@@ -87,5 +88,21 @@ public static class SystemUtils
                 Kernel32.CloseHandle(tokenHandle);
             }
         }
+    }
+
+    /// <summary>
+    /// Gets whether the current process is running under the specified built-in Windows role.
+    /// </summary>
+    /// <param name="role">The built-in Windows role to check.</param>
+    /// <returns>
+    /// <see langword="true"/> if the current process is running under the specified role;
+    /// otherwise, <see langword="false"/>.
+    /// </returns>
+    public static bool IsInRole(WindowsBuiltInRole role)
+    {
+        using WindowsIdentity identity = WindowsIdentity.GetCurrent();
+        WindowsPrincipal principal = new(identity);
+
+        return principal.IsInRole(role);
     }
 }

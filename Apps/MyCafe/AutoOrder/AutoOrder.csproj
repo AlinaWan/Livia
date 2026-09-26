@@ -9,7 +9,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <LiviaEnableBrowserCookieDecryption>true</LiviaEnableBrowserCookieDecryption>
 
-    <AssemblyVersion>2.4.0.0</AssemblyVersion>
+    <AssemblyVersion>2.4.1.0</AssemblyVersion>
       <ApplicationIcon>..\..\..\Livia\Assets\KaarinaaIcon.ico</ApplicationIcon>
   </PropertyGroup>
 

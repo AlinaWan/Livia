@@ -606,7 +606,8 @@ public sealed class MainWindow : CommonWindow
             return await RobloxServerUtils.GetPrivateServerJoinLinkAsync(
                 placeId,
                 null,
-                securityToken);
+                securityToken)
+                ?? publicServerUrl;
         }
         catch
         {

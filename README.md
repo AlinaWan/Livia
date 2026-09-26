@@ -128,13 +128,15 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 | `RobloxServerUtils.GetAllPrivateServerDetailsAsync(...)`  | Retrieves detailed information for all accessible Roblox private servers for an experience. |
 | `RobloxServerUtils.GetPrivateServerIdAsync(...)`          | Retrieves the ID of a Roblox private server for an experience by server name.               |
 | `RobloxServerUtils.GetPrivateServerJoinLinkAsync(...)`    | Retrieves the invite link of a Roblox private server for an experience by server name.      |
-| `RobloxServerUtils.GeneratePrivateServerLinkAsync(...)` | Regenerates the invite link of a Roblox private server for an experience by server name.    |
+| `RobloxServerUtils.GeneratePrivateServerLinkAsync(...)` | Regenerates the invite link of a Roblox private server for an experience by server name.      |
 
 </details>
 
 ## Livia Reference Macros
 
 The official Livia macros can be used as references for building your own macros. You can find them in the `Apps` folder of this repository.
+
+Reference macros are maintained entirely on a volunteer basis and are provided primarily as examples of developer implementation. They are not guaranteed to remain functional following updates to their respective games.
 
 Run any official Livia macro project directly using the .NET CLI:
 

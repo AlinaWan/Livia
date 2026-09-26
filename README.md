@@ -16,6 +16,15 @@ An avant-garde open-source C# automation framework and engine that brings reusab
 
 </div>
 
+## What Livia Provides
+
+* 🖥️ Elegant, Extensive Common UI
+* ⚡ Blazing-Fast DXGI Frame Capture
+* 🍪 VSS-Backed DPAPI Cookie Decryption
+* 🔧 Advanced Windows System Control
+* 🔓 Roblox CSRF Token Handling
+* 🔍 Regex-Based Roblox Log Monitoring
+
 ## Prerequisites
 
 * [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)

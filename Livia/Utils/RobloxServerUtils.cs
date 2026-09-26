@@ -184,7 +184,7 @@ public static class RobloxServerUtils
     }
 
     /// <summary>
-    /// Asynchronously regenerates the join link for a private server by sending a PATCH request 
+    /// Asynchronously regenerates the join link for a private server by sending a PATCH request
     /// to the Roblox VIP servers endpoint, forcing a new join code and link to be created.
     /// </summary>
     /// <param name="rootPlaceId">The root place ID of the Roblox experience.</param>
@@ -196,32 +196,58 @@ public static class RobloxServerUtils
     /// <returns>
     /// The newly generated private server join link, or <c>null</c> if the request fails or the server is not found.
     /// </returns>
-    private static async Task<string?> GeneratePrivateServerLinkAsync(string rootPlaceId, string? serverName, string robloxSecurityToken)
+    public static async Task<string?> GeneratePrivateServerLinkAsync(
+        string rootPlaceId,
+        string? serverName,
+        string robloxSecurityToken)
     {
-        long ? targetServerId = await GetPrivateServerIdAsync(rootPlaceId, serverName, robloxSecurityToken).ConfigureAwait(false);
+        if (string.IsNullOrWhiteSpace(robloxSecurityToken))
+        {
+            throw new ArgumentException(
+                "The .ROBLOSECURITY token cannot be null or empty.",
+                nameof(robloxSecurityToken));
+        }
+
+        long? targetServerId = await GetPrivateServerIdAsync(
+            rootPlaceId,
+            serverName,
+            robloxSecurityToken).ConfigureAwait(false);
+
         if (targetServerId == null)
         {
             return null;
         }
 
-        string patchUrl = $"https://games.roblox.com/v1/vip-servers/{targetServerId.Value}";
+        string patchUrl =
+            $"https://games.roblox.com/v1/vip-servers/{targetServerId.Value}";
 
-        using var patchRequest = new HttpRequestMessage(HttpMethod.Patch, patchUrl)
-        {
-            Content = JsonContent.Create(new { newJoinCode = true })
-        };
+        using HttpResponseMessage patchResponse =
+            await RobloxRequestUtils.SendAsync(
+                SharedClient,
+                () => new HttpRequestMessage(
+                    HttpMethod.Patch,
+                    patchUrl)
+                {
+                    Content = JsonContent.Create(new
+                    {
+                        newJoinCode = true
+                    })
+                },
+                robloxSecurityToken).ConfigureAwait(false);
 
-        // TODO: 2026-09-25: Implement X-Csrf-Token and attach it to the request headers, then change method visibility to public
-        RobloxRequestUtils.ConfigureRobloxHeaders(patchRequest, robloxSecurityToken);
-
-        using var patchResponse = await SharedClient.SendAsync(patchRequest).ConfigureAwait(false);
         if (!patchResponse.IsSuccessStatusCode)
         {
             return null;
         }
 
-        using var patchStream = await patchResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
-        var patchResult = await JsonSerializer.DeserializeAsync<VipServerResponseDto>(patchStream, JsonOptions).ConfigureAwait(false);
+        using var patchStream =
+            await patchResponse.Content.ReadAsStreamAsync()
+                .ConfigureAwait(false);
+
+        var patchResult =
+            await JsonSerializer.DeserializeAsync<VipServerResponseDto>(
+                patchStream,
+                JsonOptions).ConfigureAwait(false);
 
         return patchResult?.Link;
     }

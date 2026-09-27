@@ -105,4 +105,28 @@ public static class SystemUtils
 
         return principal.IsInRole(role);
     }
+
+    /// <summary>
+    /// Gets all built-in Windows roles that the current process is running under.
+    /// </summary>
+    /// <returns>
+    /// A list of <see cref="WindowsBuiltInRole"/> values.
+    /// </returns>
+    public static IReadOnlyList<WindowsBuiltInRole> GetRoles()
+    {
+        using WindowsIdentity identity = WindowsIdentity.GetCurrent();
+        WindowsPrincipal principal = new(identity);
+
+        var roles = new List<WindowsBuiltInRole>();
+
+        foreach (WindowsBuiltInRole role in Enum.GetValues<WindowsBuiltInRole>())
+        {
+            if (principal.IsInRole(role))
+            {
+                roles.Add(role);
+            }
+        }
+
+        return roles;
+    }
 }

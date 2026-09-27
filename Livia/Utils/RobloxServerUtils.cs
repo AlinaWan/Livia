@@ -41,7 +41,7 @@ public static class RobloxServerUtils
         string listUrl = $"https://games.roblox.com/v1/games/{rootPlaceId}/private-servers?cursor=&sortOrder=Desc&excludeFullGames=false";
 
         using var listRequest = new HttpRequestMessage(HttpMethod.Get, listUrl);
-        RobloxRequestUtils.ConfigureRobloxHeaders(listRequest, robloxSecurityToken);
+        RobloxRequestService.ConfigureRobloxHeaders(listRequest, robloxSecurityToken);
 
         using var listResponse = await SharedClient.SendAsync(listRequest).ConfigureAwait(false);
         if (!listResponse.IsSuccessStatusCode)
@@ -69,7 +69,7 @@ public static class RobloxServerUtils
 
             string detailUrl = $"https://games.roblox.com/v1/vip-servers/{serverInstance.VipServerId.Value}";
             using var detailRequest = new HttpRequestMessage(HttpMethod.Get, detailUrl);
-            RobloxRequestUtils.ConfigureRobloxHeaders(detailRequest, robloxSecurityToken);
+            RobloxRequestService.ConfigureRobloxHeaders(detailRequest, robloxSecurityToken);
 
             using var detailResponse = await SharedClient.SendAsync(detailRequest).ConfigureAwait(false);
             if (detailResponse.IsSuccessStatusCode)
@@ -110,7 +110,7 @@ public static class RobloxServerUtils
         string listUrl = $"https://games.roblox.com/v1/games/{rootPlaceId}/private-servers?cursor=&sortOrder=Desc&excludeFullGames=false";
 
         using var listRequest = new HttpRequestMessage(HttpMethod.Get, listUrl);
-        RobloxRequestUtils.ConfigureRobloxHeaders(listRequest, robloxSecurityToken);
+        RobloxRequestService.ConfigureRobloxHeaders(listRequest, robloxSecurityToken);
 
         using var listResponse = await SharedClient.SendAsync(listRequest).ConfigureAwait(false);
         if (!listResponse.IsSuccessStatusCode)
@@ -169,7 +169,7 @@ public static class RobloxServerUtils
 
         string detailUrl = $"https://games.roblox.com/v1/vip-servers/{targetServerId.Value}";
         using var detailRequest = new HttpRequestMessage(HttpMethod.Get, detailUrl);
-        RobloxRequestUtils.ConfigureRobloxHeaders(detailRequest, robloxSecurityToken);
+        RobloxRequestService.ConfigureRobloxHeaders(detailRequest, robloxSecurityToken);
 
         using var detailResponse = await SharedClient.SendAsync(detailRequest).ConfigureAwait(false);
         if (!detailResponse.IsSuccessStatusCode)
@@ -222,7 +222,7 @@ public static class RobloxServerUtils
             $"https://games.roblox.com/v1/vip-servers/{targetServerId.Value}";
 
         using HttpResponseMessage patchResponse =
-            await RobloxRequestUtils.SendAsync(
+            await RobloxRequestService.SendAsync(
                 SharedClient,
                 () => new HttpRequestMessage(
                     HttpMethod.Patch,

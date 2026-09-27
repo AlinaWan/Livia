@@ -108,6 +108,7 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 | `WindowsOcrService`     | Provides optical character recognition using the native Windows OCR engine.   |
 | `DiscordWebhookService` | Sends payloads to a Discord channel via webhooks.                             |
 | `SmsService`            | Sends SMS text messages to a specified phone number.                          |
+| `WaitableTimerService`  | Schedules asynchronous callbacks for a specified UTC time or date.            |
 
 </details>
 
@@ -121,6 +122,8 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 | `WindowUtils.ForceFocusWindow(...)`                       | Forces the target application window to the foreground and brings it into focus.            |
 | `SystemUtils.InitiateSystemShutdown(...)`                 | Requests a system shutdown with a specified timeout and display message.                    |
 | `SystemUtils.AbortSystemShutdown(...)`                    | Aborts a previously scheduled system shutdown request.                                      |
+| `SystemUtils.IsInRole(...)`                               | Gets whether the current process is running under the specified built-in Windows role.      |
+| `SystemUtils.GetRoles(...)`                               | Gets all built-in Windows roles that the current process is running under.                  |
 | `NetworkUtils.SetRadioStateAsync(...)`                    | Requests a change to the operational state of a specified radio kind.                       |
 | `NetworkUtils.GetRadioStateAsync(...)`                    | Gets the current operational state of a specified radio kind.                               |
 | `IpUtils.GetIpInfoAsync(...)`                             | Retrieves information for a specified internet protocol address.                            |

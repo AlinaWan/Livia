@@ -4,7 +4,7 @@ using System.Net.Http;
 
 namespace Livia.Utils;
 
-internal static class RobloxRequestUtils
+internal static class RobloxRequestService
 {
     private const string CsrfTokenHeader = "X-Csrf-Token";
 

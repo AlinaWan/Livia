@@ -38,6 +38,11 @@ public sealed class MainWindow : CommonWindow
     private bool _rejoinOnDisconnect = false;
     private string _rejoinUrl = "";
 
+    private int _firstItemEnterOffset = 2;
+    private int _buyButtonOffset = 3;
+    private int _mainMenuDockOffset = 5;
+    private int _rightmostDockOffset = 3;
+
     private CancellationTokenSource? _cts;
     private WindowFocusMonitor? _focusMonitor;
     private RobloxLogMonitor? _logMonitor;
@@ -193,6 +198,7 @@ public sealed class MainWindow : CommonWindow
         tabs.Template = CreateTabControlTemplate();
 
         tabs.Items.Add(BuildMainTab());
+        tabs.Items.Add(BuildAdvancedTab());
         tabs.Items.Add(BuildDebugTab());
         tabs.Items.Add(BuildHelpTab());
         tabs.Items.Add(BuildCreditsTab());
@@ -323,6 +329,80 @@ public sealed class MainWindow : CommonWindow
                 "Rejoin URL:",
                 _rejoinUrl,
                 GetRejoinURL,
+                Theme));
+
+        tab.Content = stack;
+
+        return tab;
+    }
+
+    // -------------------------------------------------------------------------
+    // Advanced Tab
+    // -------------------------------------------------------------------------
+
+    private TabItem BuildAdvancedTab()
+    {
+        var tab = CommonTab.Create(
+            "Advanced",
+            Theme);
+
+        var stack = new StackPanel
+        {
+            Margin = new Thickness(5)
+        };
+
+        stack.Children.Add(new TextBlock
+        {
+            Text = "EXT. CONFIGURATION",
+            FontSize = 10,
+            FontWeight = FontWeights.SemiBold,
+            Foreground = new SolidColorBrush(Theme.MutedText),
+            Margin = new Thickness(0, 5, 0, 15)
+        });
+
+        stack.Children.Add(
+            CommonIntegerInput.CreateRow(
+                "Buy Button Offset:",
+                _buyButtonOffset,
+                value =>
+                {
+                    _buyButtonOffset = value;
+                    Log($"Buy button offset set to: {_buyButtonOffset}");
+                },
+                Theme,
+                validator: val => val > 0));
+
+        stack.Children.Add(
+            CommonIntegerInput.CreateRow(
+                "First Item Enter Offset:",
+                _firstItemEnterOffset,
+                value =>
+                {
+                    _firstItemEnterOffset = value;
+                    Log($"First item enter offset set to: {_firstItemEnterOffset} ms");
+                },
+                Theme));
+
+        stack.Children.Add(
+            CommonIntegerInput.CreateRow(
+                "Main Menu Dock Offset:",
+                _mainMenuDockOffset,
+                value =>
+                {
+                    _mainMenuDockOffset = value;
+                    Log($"Main menu dock offset set to: {_mainMenuDockOffset} ms");
+                },
+                Theme));
+
+        stack.Children.Add(
+            CommonIntegerInput.CreateRow(
+                "Rightmost Dock Offset:",
+                _rightmostDockOffset,
+                value =>
+                {
+                    _rightmostDockOffset = value;
+                    Log($"Rightmost dock offset set to: {_rightmostDockOffset} ms");
+                },
                 Theme));
 
         tab.Content = stack;
@@ -756,7 +836,7 @@ public sealed class MainWindow : CommonWindow
             await Task.Delay(_pressDelay, token);
 
             // Move to the main menu button on to top middle button row
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < _mainMenuDockOffset; i++)
             {
                 _inputSim.Keyboard.KeyPress(VirtualKeys.Left);
                 await Task.Delay(_pressDelay, token);
@@ -883,7 +963,7 @@ public sealed class MainWindow : CommonWindow
                 await Task.Delay(_pressDelay, token);
 
                 // 3 left presses should get us to 4th button in the top middle button row, which seems the safest
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < _rightmostDockOffset; i++)
                 {
                     _inputSim.Keyboard.KeyPress(VirtualKeys.Left);
                     await Task.Delay(_pressDelay, token);
@@ -898,7 +978,10 @@ public sealed class MainWindow : CommonWindow
                 // Main execution loop.
                 for (int i = 0; i < _loopCount; i++)
                 {
-                    for (int d = 0; d < 2; d++)
+                    // 2 downs for the first item (i == 0), 3 downs for subsequent items (i > 0)
+                    int downPressCount = (i == 0) ? _firstItemEnterOffset : _buyButtonOffset;
+
+                    for (int d = 0; d < downPressCount; d++)
                     {
                         _inputSim.Keyboard.KeyPress(VirtualKeys.Down);
                         await Task.Delay(_pressDelay, token);

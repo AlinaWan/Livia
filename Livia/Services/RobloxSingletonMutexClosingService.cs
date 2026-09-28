@@ -462,15 +462,15 @@ public sealed class RobloxSingletonMutexClosingService : IDisposable
             {
                 uint status =
                     Ntdll.NtQuerySystemInformation(
-                        Ntdll.SystemExtendedHandleInformation,
+                        Ntdll.SYSTEM_EXTENDED_HANDLE_INFORMATION,
                         buffer,
                         bufferSize,
                         out int returnLength);
 
-                if (status == Ntdll.StatusSuccess)
+                if (status == Ntdll.STATUS_SUCCESS)
                     return ReadHandleTable(buffer);
 
-                if (status != Ntdll.StatusInfoLengthMismatch)
+                if (status != Ntdll.STATUS_INFO_LENGTH_MISMATCH)
                 {
                     throw new InvalidOperationException(
                         $"NtQuerySystemInformation failed " +
@@ -552,12 +552,12 @@ public sealed class RobloxSingletonMutexClosingService : IDisposable
                 uint status =
                     Ntdll.NtQueryObject(
                         handle,
-                        Ntdll.ObjectNameInformation,
+                        Ntdll.OBJECT_NAME_INFORMATION,
                         buffer,
                         bufferSize,
                         out int returnLength);
 
-                if (status == Ntdll.StatusSuccess)
+                if (status == Ntdll.STATUS_SUCCESS)
                 {
                     Ntdll.UnicodeString unicodeString =
                         Marshal.PtrToStructure<
@@ -579,7 +579,7 @@ public sealed class RobloxSingletonMutexClosingService : IDisposable
                     return objectName is not null;
                 }
 
-                if (status != Ntdll.StatusInfoLengthMismatch)
+                if (status != Ntdll.STATUS_INFO_LENGTH_MISMATCH)
                     return false;
 
                 bufferSize = Math.Max(

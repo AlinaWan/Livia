@@ -5,11 +5,11 @@ namespace Livia.Native;
 
 internal static class Ntdll
 {
-    internal const int SystemExtendedHandleInformation = 64;
-    internal const int ObjectNameInformation = 1;
+    internal const int SYSTEM_EXTENDED_HANDLE_INFORMATION = 64;
+    internal const int OBJECT_NAME_INFORMATION = 1;
 
-    internal const uint StatusSuccess = 0x00000000;
-    internal const uint StatusInfoLengthMismatch = 0xC0000004;
+    internal const uint STATUS_SUCCESS = 0x00000000;
+    internal const uint STATUS_INFO_LENGTH_MISMATCH = 0xC0000004;
 
     [StructLayout(LayoutKind.Sequential)]
     internal struct SystemHandleTableEntryInfoEx

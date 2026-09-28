@@ -11,32 +11,39 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
 using Livia;
+using Livia.Dtos.Roblox;
 using Livia.Services;
 using Livia.Services.Input;
 using Livia.UI;
 using Livia.UI.Controls;
 using Livia.Utils;
+using Windows.Devices.Enumeration;
 
 namespace AutoOrder;
 
 public sealed class MainWindow : CommonWindow
 {
     // -------------------------------------------------------------------------
-    // Input Simulator Instance and Hotkey Instance
+    // Services
     // -------------------------------------------------------------------------
 
     private readonly InputSimulationService _inputSim = new();
     private readonly HotkeyService _hotkeys;
+    private readonly RobloxSingletonMutexClosingService _mutexService = new();
 
     // -------------------------------------------------------------------------
     // Application State
     // -------------------------------------------------------------------------
+
+    const string placeId = "133345376331809";
 
     private int _loopCount = 14;
     private int _pressDelay = 100;
     private bool _stopOnUnfocus = true;
     private bool _rejoinOnDisconnect = false;
     private string _rejoinUrl = "";
+
+    private CommonListInput _tokens = null!;
 
     private int _firstItemEnterOffset = 2;
     private int _buyButtonOffset = 3;
@@ -198,7 +205,8 @@ public sealed class MainWindow : CommonWindow
         tabs.Template = CreateTabControlTemplate();
 
         tabs.Items.Add(BuildMainTab());
-        tabs.Items.Add(BuildAdvancedTab());
+        //tabs.Items.Add(BuildAdvancedTab());
+        tabs.Items.Add(BuildTokensTab());
         tabs.Items.Add(BuildDebugTab());
         tabs.Items.Add(BuildHelpTab());
         tabs.Items.Add(BuildCreditsTab());
@@ -336,79 +344,120 @@ public sealed class MainWindow : CommonWindow
         return tab;
     }
 
+    private TabItem BuildTokensTab()
+    {
+        var tab = CommonTab.Create(
+            "Tokens",
+            Theme);
+
+        var panel = new StackPanel
+        {
+            Margin = new Thickness(6)
+        };
+
+        _tokens = new CommonListInput(
+            Theme)
+        {
+            Height = 185
+        };
+
+        panel.Children.Add(
+            _tokens);
+
+        var joinButton = CommonActionButton.Create(
+            "Join Accounts",
+            HandleJoiningAccounts,
+            Theme,
+            "Joining...");
+
+        joinButton.Margin =
+            new Thickness(
+                0,
+                6,
+                0,
+                0);
+
+        panel.Children.Add(
+            joinButton);
+
+        tab.Content = panel;
+
+        return tab;
+    }
+
     // -------------------------------------------------------------------------
     // Advanced Tab
     // -------------------------------------------------------------------------
 
-    private TabItem BuildAdvancedTab()
-    {
-        var tab = CommonTab.Create(
-            "Advanced",
-            Theme);
+    //private TabItem BuildAdvancedTab()
+    //{
+    //    var tab = CommonTab.Create(
+    //        "Advanced",
+    //        Theme);
 
-        var stack = new StackPanel
-        {
-            Margin = new Thickness(5)
-        };
+    //    var stack = new StackPanel
+    //    {
+    //        Margin = new Thickness(5)
+    //    };
 
-        stack.Children.Add(new TextBlock
-        {
-            Text = "EXT. CONFIGURATION",
-            FontSize = 10,
-            FontWeight = FontWeights.SemiBold,
-            Foreground = new SolidColorBrush(Theme.MutedText),
-            Margin = new Thickness(0, 5, 0, 15)
-        });
+    //    stack.Children.Add(new TextBlock
+    //    {
+    //        Text = "EXT. CONFIGURATION",
+    //        FontSize = 10,
+    //        FontWeight = FontWeights.SemiBold,
+    //        Foreground = new SolidColorBrush(Theme.MutedText),
+    //        Margin = new Thickness(0, 5, 0, 15)
+    //    });
 
-        stack.Children.Add(
-            CommonIntegerInput.CreateRow(
-                "Buy Button Offset:",
-                _buyButtonOffset,
-                value =>
-                {
-                    _buyButtonOffset = value;
-                    Log($"Buy button offset set to: {_buyButtonOffset}");
-                },
-                Theme,
-                validator: val => val > 0));
+    //    stack.Children.Add(
+    //        CommonIntegerInput.CreateRow(
+    //            "Buy Button Offset:",
+    //            _buyButtonOffset,
+    //            value =>
+    //            {
+    //                _buyButtonOffset = value;
+    //                Log($"Buy button offset set to: {_buyButtonOffset}");
+    //            },
+    //            Theme,
+    //            validator: val => val > 0));
 
-        stack.Children.Add(
-            CommonIntegerInput.CreateRow(
-                "First Item Enter Offset:",
-                _firstItemEnterOffset,
-                value =>
-                {
-                    _firstItemEnterOffset = value;
-                    Log($"First item enter offset set to: {_firstItemEnterOffset} ms");
-                },
-                Theme));
+    //    stack.Children.Add(
+    //        CommonIntegerInput.CreateRow(
+    //            "First Item Enter Offset:",
+    //            _firstItemEnterOffset,
+    //            value =>
+    //            {
+    //                _firstItemEnterOffset = value;
+    //                Log($"First item enter offset set to: {_firstItemEnterOffset} ms");
+    //            },
+    //            Theme));
 
-        stack.Children.Add(
-            CommonIntegerInput.CreateRow(
-                "Main Menu Dock Offset:",
-                _mainMenuDockOffset,
-                value =>
-                {
-                    _mainMenuDockOffset = value;
-                    Log($"Main menu dock offset set to: {_mainMenuDockOffset} ms");
-                },
-                Theme));
+    //    stack.Children.Add(
+    //        CommonIntegerInput.CreateRow(
+    //            "Main Menu Dock Offset:",
+    //            _mainMenuDockOffset,
+    //            value =>
+    //            {
+    //                _mainMenuDockOffset = value;
+    //                Log($"Main menu dock offset set to: {_mainMenuDockOffset} ms");
+    //            },
+    //            Theme));
 
-        stack.Children.Add(
-            CommonIntegerInput.CreateRow(
-                "Rightmost Dock Offset:",
-                _rightmostDockOffset,
-                value =>
-                {
-                    _rightmostDockOffset = value;
-                    Log($"Rightmost dock offset set to: {_rightmostDockOffset} ms");
-                },
-                Theme));
+    //    stack.Children.Add(
+    //        CommonIntegerInput.CreateRow(
+    //            "Rightmost Dock Offset:",
+    //            _rightmostDockOffset,
+    //            value =>
+    //            {
+    //                _rightmostDockOffset = value;
+    //                Log($"Rightmost dock offset set to: {_rightmostDockOffset} ms");
+    //            },
+    //            Theme));
 
-        tab.Content = stack;
+    //    tab.Content = stack;
 
-        return tab;
-    }
+    //    return tab;
+    //}
 
     // -------------------------------------------------------------------------
     // Debug Tab
@@ -473,7 +522,6 @@ public sealed class MainWindow : CommonWindow
     // -------------------------------------------------------------------------
     // Help Tab
     // -------------------------------------------------------------------------
-
     private TabItem BuildHelpTab()
     {
         var tab = CommonTab.Create(
@@ -519,6 +567,35 @@ public sealed class MainWindow : CommonWindow
             CommonHelpStep.Create(
                 "4",
                 "Press 'F6' to Start / Stop macro.",
+                Theme));
+
+        stack.Children.Add(
+            new TextBlock
+            {
+                Text = "ALT ACCOUNT JOINING (FOR FRIEND BOOST)",
+                FontSize = 10,
+                FontWeight = FontWeights.SemiBold,
+                Foreground =
+                    new SolidColorBrush(
+                        Theme.MutedText),
+                Margin =
+                    new Thickness(
+                        0,
+                        0,
+                        0,
+                        0)
+            });
+
+        stack.Children.Add(
+            CommonHelpStep.Create(
+                "E1",
+                "Run app as Administrator. Your logged-in Roblox account is the host, and the first available private server is used.",
+                Theme));
+
+        stack.Children.Add(
+            CommonHelpStep.Create(
+                "E2",
+                "In the Tokens tab, add the .ROBLOSECURITY tokens for your alts, then press Join Accounts.",
                 Theme));
 
         card.Child = stack;
@@ -661,7 +738,6 @@ public sealed class MainWindow : CommonWindow
     // -------------------------------------------------------------------------
     private async Task<string?> GetRejoinURL()
     {
-        const string placeId = "133345376331809";
         const string publicServerUrl = $"roblox://placeId={placeId}";
 
         try
@@ -693,6 +769,51 @@ public sealed class MainWindow : CommonWindow
         {
             return publicServerUrl;
         }
+    }
+
+    private async Task HandleJoiningAccounts()
+    {
+        if (!SystemUtils.IsInRole(WindowsBuiltInRole.Administrator))
+        {
+            return;
+        }
+
+        string[] tokens =
+            _tokens.Items.ToArray();
+
+        if (tokens.Length == 0)
+        {
+            return;
+        }
+
+        _mutexService.Start();
+
+        var securityToken = await Task.Run(() =>
+                BrowserUtils.GetCookieValue(
+                    ".roblox.com",
+                    ".ROBLOSECURITY"));
+
+        if (string.IsNullOrEmpty(securityToken))
+        {
+            return;
+        }
+
+        string? privateServerAccessCode =
+            await RobloxServerUtils.GetPrivateServerAccessCodeAsync(
+                placeId,
+                null,
+                securityToken);
+
+        if (privateServerAccessCode == null)
+        {
+            return;
+        }
+
+        IReadOnlyList<RobloxAccountLaunchResultDto> results =
+            await RobloxPlayerUtils.JoinAccountsAsync(
+                tokens,
+                long.Parse(placeId),
+                privateServerAccessCode);
     }
 
     private void OnTargetWindowUnfocused(object? sender, EventArgs e)
@@ -1023,5 +1144,6 @@ public sealed class MainWindow : CommonWindow
     public void Cleanup()
     {
         _logMonitor?.Dispose();
+        _mutexService?.Dispose();
     }
 }

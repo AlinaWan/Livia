@@ -22,6 +22,7 @@ An avant-garde open-source C# automation framework and engine that brings reusab
 * ⚡ Blazing-Fast DXGI Frame Capture
 * 🍪 VSS-Backed DPAPI Cookie Decryption
 * 🔧 Advanced Windows System Control
+* 🧩 Roblox Multi-Instance Support
 * 🔓 Roblox CSRF Token Handling
 * 🔍 Regex-Based Roblox Log Monitoring
 
@@ -100,15 +101,16 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 <details>
   <summary>Click to expand</summary>
 
-| API                     | Description                                                                   |
-| :---------------------- | ----------------------------------------------------------------------------- |
-| `DxgiFrameProvider`     | Captures a screen region directly from a DXGI GPU staging buffer.             |
-| `WindowFocusMonitor`    | Monitors a process by executable name and raises an event on focus change.    |
-| `RobloxLogMonitor`      | Monitors a Roblox log file by a regex pattern and invokes callbacks on match. |
-| `WindowsOcrService`     | Provides optical character recognition using the native Windows OCR engine.   |
-| `DiscordWebhookService` | Sends payloads to a Discord channel via webhooks.                             |
-| `SmsService`            | Sends SMS text messages to a specified phone number.                          |
-| `WaitableTimerService`  | Schedules asynchronous callbacks for a specified UTC time or date.            |
+| API                                  | Description                                                                   |
+| :----------------------------------- | ----------------------------------------------------------------------------- |
+| `DxgiFrameProvider`                  | Captures a screen region directly from a DXGI GPU staging buffer.             |
+| `WindowFocusMonitor`                 | Monitors a process by executable name and raises an event on focus change.    |
+| `RobloxLogMonitor`                   | Monitors a Roblox log file by a regex pattern and invokes callbacks on match. |
+| `RobloxSingletonMutexClosingService` | Monitors Roblox processes and closes their singleton mutex and event handles. |
+| `WindowsOcrService`                  | Provides optical character recognition using the native Windows OCR engine.   |
+| `DiscordWebhookService`              | Sends payloads to a Discord channel via webhooks.                             |
+| `SmsService`                         | Sends SMS text messages to a specified phone number.                          |
+| `WaitableTimerService`               | Schedules asynchronous callbacks for a specified UTC time or date.            |
 
 </details>
 

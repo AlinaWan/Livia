@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Apps/">
     <Project Path="Apps/General/AutoRejoin/AutoRejoin.csproj" Id="caea8ea3-c0f6-4c9a-abaa-9eb383fa672f" />
+    <Project Path="Apps/General/SingletonMutexCloser/SingletonMutexCloser.csproj" Id="3271e532-0918-4571-ad4a-72755c5ecbf1" />
     <Project Path="Apps/MyCafe/AutoOrder/AutoOrder.csproj" Id="3eb6977e-0efa-424c-9924-9bf474902d3a" />
   </Folder>
   <Project Path="Livia.Analyzers/Livia.Analyzers.csproj" Id="f6b4d974-9948-4e90-bc47-8a0e3592dd9c" />

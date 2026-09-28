@@ -18,6 +18,11 @@ internal static class Kernel32
     internal const uint WAIT_OBJECT_0 = 0x00000000;
     internal const uint INFINITE = 0xFFFFFFFF;
 
+    internal const uint PROCESS_DUP_HANDLE = 0x0040;
+
+    internal const uint DUPLICATE_CLOSE_SOURCE = 0x00000001;
+    internal const uint DUPLICATE_SAME_ACCESS = 0x00000002;
+
     internal static readonly IntPtr INVALID_HANDLE_VALUE = new(-1);
 
     [DllImport("kernel32.dll")]
@@ -95,6 +100,23 @@ internal static class Kernel32
     internal static extern uint WaitForSingleObject(
         SafeWaitHandle hHandle,
         uint dwMilliseconds);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    internal static extern IntPtr OpenProcess(
+        uint desiredAccess,
+        [MarshalAs(UnmanagedType.Bool)] bool inheritHandle,
+        int processId);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool DuplicateHandle(
+        IntPtr sourceProcessHandle,
+        IntPtr sourceHandle,
+        IntPtr targetProcessHandle,
+        out IntPtr targetHandle,
+        uint desiredAccess,
+        [MarshalAs(UnmanagedType.Bool)] bool inheritHandle,
+        uint options);
 
     [StructLayout(LayoutKind.Sequential)]
     internal struct FILETIME

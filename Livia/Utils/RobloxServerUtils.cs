@@ -1,86 +1,107 @@
-using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using Livia.Dtos.Roblox;
 
 namespace Livia.Utils;
 
 /// <summary>
-/// High-performance utility for discovering Roblox private servers, fetching join links, 
+/// Provides utilities for discovering Roblox private servers, fetching join links,
 /// and managing server configurations via direct HTTP APIs.
 /// </summary>
 public static class RobloxServerUtils
 {
-    private static readonly HttpClient SharedClient = new();
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
-
     /// <summary>
-    /// Asynchronously retrieves detailed information and join links for all private servers 
+    /// Asynchronously retrieves detailed information and join links for all private servers
     /// owned by or accessible to the authenticated user for a given place.
     /// </summary>
-    /// <param name="rootPlaceId">The root place ID of the Roblox experience.</param>
-    /// <param name="robloxSecurityToken">The valid <c>.ROBLOSECURITY</c> authentication cookie token.</param>
+    /// <param name="rootPlaceId">
+    /// The root place ID of the Roblox experience.
+    /// </param>
+    /// <param name="robloxSecurityToken">
+    /// The valid <c>.ROBLOSECURITY</c> authentication cookie token.
+    /// </param>
     /// <returns>
-    /// A list of detailed private server response objects, or an empty list if none are found or the request fails.
+    /// A list of detailed private server response objects, or an empty list if none are found
+    /// or the request fails.
     /// </returns>
-    public static async Task<List<VipServerResponseDto>> GetAllPrivateServerDetailsAsync(string rootPlaceId, string robloxSecurityToken)
+    public static async Task<List<VipServerResponseDto>> GetAllPrivateServerDetailsAsync(
+        string rootPlaceId,
+        string robloxSecurityToken)
     {
-        if (string.IsNullOrWhiteSpace(robloxSecurityToken))
-        {
-            throw new ArgumentException("The .ROBLOSECURITY token cannot be null or empty.", nameof(robloxSecurityToken));
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(
+            rootPlaceId);
 
-        // 1. Fetch the private server list to discover all server IDs
-        string listUrl = $"https://games.roblox.com/v1/games/{rootPlaceId}/private-servers?cursor=&sortOrder=Desc&excludeFullGames=false";
+        ArgumentException.ThrowIfNullOrWhiteSpace(
+            robloxSecurityToken);
 
-        using var listRequest = new HttpRequestMessage(HttpMethod.Get, listUrl);
-        RobloxRequestService.ConfigureRobloxHeaders(listRequest, robloxSecurityToken);
+        string listUrl =
+            $"https://games.roblox.com/v1/games/{rootPlaceId}" +
+            "/private-servers?cursor=&sortOrder=Desc&excludeFullGames=false";
 
-        using var listResponse = await SharedClient.SendAsync(listRequest).ConfigureAwait(false);
+        using HttpResponseMessage listResponse =
+            await RobloxRequestService.SendAsync(
+                RobloxRequestService.SharedClient,
+                () => new HttpRequestMessage(
+                    HttpMethod.Get,
+                    listUrl),
+                robloxSecurityToken,
+                RobloxRequestService.ConfigureRobloxHeaders)
+            .ConfigureAwait(false);
+
         if (!listResponse.IsSuccessStatusCode)
         {
-            return new List<VipServerResponseDto>();
+            return [];
         }
 
-        using var listStream = await listResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
-        var listResult = await JsonSerializer.DeserializeAsync<VipServerListResponseDto>(listStream, JsonOptions).ConfigureAwait(false);
+        VipServerListResponseDto? listResult =
+            await listResponse.Content.ReadFromJsonAsync<VipServerListResponseDto>(
+                RobloxRequestService.JsonOptions)
+            .ConfigureAwait(false);
 
-        if (listResult?.Data == null || listResult.Data.Count == 0)
+        if (listResult?.Data == null ||
+            listResult.Data.Count == 0)
         {
-            return new List<VipServerResponseDto>();
+            return [];
         }
 
-        var detailedServers = new List<VipServerResponseDto>();
+        List<VipServerResponseDto> detailedServers = [];
 
-        // 2. Iterate through each discovered server and fetch its complete details
-        foreach (var serverInstance in listResult.Data)
+        foreach (VipServerInstanceDto serverInstance in listResult.Data)
         {
             if (serverInstance.VipServerId == null)
             {
                 continue;
             }
 
-            string detailUrl = $"https://games.roblox.com/v1/vip-servers/{serverInstance.VipServerId.Value}";
-            using var detailRequest = new HttpRequestMessage(HttpMethod.Get, detailUrl);
-            RobloxRequestService.ConfigureRobloxHeaders(detailRequest, robloxSecurityToken);
+            string detailUrl =
+                $"https://games.roblox.com/v1/vip-servers/" +
+                $"{serverInstance.VipServerId.Value}";
 
-            using var detailResponse = await SharedClient.SendAsync(detailRequest).ConfigureAwait(false);
-            if (detailResponse.IsSuccessStatusCode)
+            using HttpResponseMessage detailResponse =
+                await RobloxRequestService.SendAsync(
+                    RobloxRequestService.SharedClient,
+                    () => new HttpRequestMessage(
+                        HttpMethod.Get,
+                        detailUrl),
+                    robloxSecurityToken,
+                    RobloxRequestService.ConfigureRobloxHeaders)
+                .ConfigureAwait(false);
+
+            if (!detailResponse.IsSuccessStatusCode)
             {
-                using var detailStream = await detailResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                var detailResult = await JsonSerializer.DeserializeAsync<VipServerResponseDto>(detailStream, JsonOptions).ConfigureAwait(false);
+                continue;
+            }
 
-                if (detailResult != null)
-                {
-                    detailedServers.Add(detailResult);
-                }
+            VipServerResponseDto? detailResult =
+                await detailResponse.Content
+                    .ReadFromJsonAsync<VipServerResponseDto>(
+                        RobloxRequestService.JsonOptions)
+                    .ConfigureAwait(false);
+
+            if (detailResult != null)
+            {
+                detailedServers.Add(detailResult);
             }
         }
 
@@ -88,40 +109,60 @@ public static class RobloxServerUtils
     }
 
     /// <summary>
-    /// Asynchronously retrieves the unique VIP server ID for a private server 
+    /// Asynchronously retrieves the unique VIP server ID for a private server
     /// matching the specified name, or the first available server if no name is provided.
     /// </summary>
-    /// <param name="rootPlaceId">The root place ID of the Roblox experience.</param>
+    /// <param name="rootPlaceId">
+    /// The root place ID of the Roblox experience.
+    /// </param>
     /// <param name="serverName">
     /// The display name of the target private server, or <c>null</c> or empty
     /// to select the first available private server.
     /// </param>
-    /// <param name="robloxSecurityToken">The valid <c>.ROBLOSECURITY</c> authentication cookie token.</param>
+    /// <param name="robloxSecurityToken">
+    /// The valid <c>.ROBLOSECURITY</c> authentication cookie token.
+    /// </param>
     /// <returns>
-    /// The unique <c>vipServerId</c> of the server, or <c>null</c> if no matching server is found.
+    /// The unique <c>vipServerId</c> of the server, or <c>null</c> if no matching
+    /// server is found.
     /// </returns>
-    public static async Task<long?> GetPrivateServerIdAsync(string rootPlaceId, string? serverName, string robloxSecurityToken)
+    public static async Task<long?> GetPrivateServerIdAsync(
+        string rootPlaceId,
+        string? serverName,
+        string robloxSecurityToken)
     {
-        if (string.IsNullOrWhiteSpace(robloxSecurityToken))
-        {
-            throw new ArgumentException("The .ROBLOSECURITY token cannot be null or empty.", nameof(robloxSecurityToken));
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(
+            rootPlaceId);
 
-        string listUrl = $"https://games.roblox.com/v1/games/{rootPlaceId}/private-servers?cursor=&sortOrder=Desc&excludeFullGames=false";
+        ArgumentException.ThrowIfNullOrWhiteSpace(
+            robloxSecurityToken);
 
-        using var listRequest = new HttpRequestMessage(HttpMethod.Get, listUrl);
-        RobloxRequestService.ConfigureRobloxHeaders(listRequest, robloxSecurityToken);
+        string listUrl =
+            $"https://games.roblox.com/v1/games/{rootPlaceId}" +
+            "/private-servers?cursor=&sortOrder=Desc&excludeFullGames=false";
 
-        using var listResponse = await SharedClient.SendAsync(listRequest).ConfigureAwait(false);
+        using HttpResponseMessage listResponse =
+            await RobloxRequestService.SendAsync(
+                RobloxRequestService.SharedClient,
+                () => new HttpRequestMessage(
+                    HttpMethod.Get,
+                    listUrl),
+                robloxSecurityToken,
+                RobloxRequestService.ConfigureRobloxHeaders)
+            .ConfigureAwait(false);
+
         if (!listResponse.IsSuccessStatusCode)
         {
             return null;
         }
 
-        using var listStream = await listResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
-        var listResult = await JsonSerializer.DeserializeAsync<VipServerListResponseDto>(listStream, JsonOptions).ConfigureAwait(false);
+        VipServerListResponseDto? listResult =
+            await listResponse.Content.ReadFromJsonAsync<VipServerListResponseDto>(
+                RobloxRequestService.JsonOptions)
+            .ConfigureAwait(false);
 
-        if (listResult?.Data == null || listResult.Data.Count == 0)
+        if (listResult?.Data == null ||
+            listResult.Data.Count == 0)
         {
             return null;
         }
@@ -131,11 +172,96 @@ public static class RobloxServerUtils
             return listResult.Data[0].VipServerId;
         }
 
-        foreach (var server in listResult.Data)
+        string targetName = serverName.Trim();
+
+        foreach (VipServerInstanceDto server in listResult.Data)
         {
-            if (string.Equals(server.Name, serverName.Trim(), StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(
+                    server.Name,
+                    targetName,
+                    StringComparison.OrdinalIgnoreCase))
             {
                 return server.VipServerId;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Asynchronously retrieves the unique VIP server access code for a private server
+    /// matching the specified name, or the first available server if no name is provided.
+    /// </summary>
+    /// <param name="rootPlaceId">
+    /// The root place ID of the Roblox experience.
+    /// </param>
+    /// <param name="serverName">
+    /// The display name of the target private server, or <c>null</c> or empty
+    /// to select the first available private server.
+    /// </param>
+    /// <param name="robloxSecurityToken">
+    /// The valid <c>.ROBLOSECURITY</c> authentication cookie token.
+    /// </param>
+    /// <returns>
+    /// The unique <c>accessCode</c> of the server, or <c>null</c> if no matching
+    /// server is found.
+    /// </returns>
+    public static async Task<string?> GetPrivateServerAccessCodeAsync(
+        string rootPlaceId,
+        string? serverName,
+        string robloxSecurityToken)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(
+            rootPlaceId);
+
+        ArgumentException.ThrowIfNullOrWhiteSpace(
+            robloxSecurityToken);
+
+        string listUrl =
+            $"https://games.roblox.com/v1/games/{rootPlaceId}" +
+            "/private-servers?cursor=&sortOrder=Desc&excludeFullGames=false";
+
+        using HttpResponseMessage listResponse =
+            await RobloxRequestService.SendAsync(
+                RobloxRequestService.SharedClient,
+                () => new HttpRequestMessage(
+                    HttpMethod.Get,
+                    listUrl),
+                robloxSecurityToken,
+                RobloxRequestService.ConfigureRobloxHeaders)
+            .ConfigureAwait(false);
+
+        if (!listResponse.IsSuccessStatusCode)
+        {
+            return null;
+        }
+
+        VipServerListResponseDto? listResult =
+            await listResponse.Content.ReadFromJsonAsync<VipServerListResponseDto>(
+                RobloxRequestService.JsonOptions)
+            .ConfigureAwait(false);
+
+        if (listResult?.Data == null ||
+            listResult.Data.Count == 0)
+        {
+            return null;
+        }
+
+        if (string.IsNullOrWhiteSpace(serverName))
+        {
+            return listResult.Data[0].AccessCode;
+        }
+
+        string targetName = serverName.Trim();
+
+        foreach (VipServerInstanceDto server in listResult.Data)
+        {
+            if (string.Equals(
+                    server.Name,
+                    targetName,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return server.AccessCode;
             }
         }
 
@@ -146,12 +272,16 @@ public static class RobloxServerUtils
     /// Asynchronously retrieves the existing join link for a private server
     /// accessible to the authenticated Roblox user.
     /// </summary>
-    /// <param name="rootPlaceId">The root place ID of the Roblox experience.</param>
+    /// <param name="rootPlaceId">
+    /// The root place ID of the Roblox experience.
+    /// </param>
     /// <param name="serverName">
     /// The display name of the target private server, or <c>null</c> or empty
     /// to select the first available private server.
     /// </param>
-    /// <param name="robloxSecurityToken">The valid <c>.ROBLOSECURITY</c> authentication cookie token.</param>
+    /// <param name="robloxSecurityToken">
+    /// The valid <c>.ROBLOSECURITY</c> authentication cookie token.
+    /// </param>
     /// <returns>
     /// The existing private server join link, or <c>null</c> if no matching
     /// server is found or the server does not have a join link.
@@ -159,26 +289,47 @@ public static class RobloxServerUtils
     /// <remarks>
     /// This method does not generate a join link if one has not been generated.
     /// </remarks>
-    public static async Task<string?> GetPrivateServerJoinLinkAsync(string rootPlaceId, string? serverName, string robloxSecurityToken)
+    public static async Task<string?> GetPrivateServerJoinLinkAsync(
+        string rootPlaceId,
+        string? serverName,
+        string robloxSecurityToken)
     {
-        long? targetServerId = await GetPrivateServerIdAsync(rootPlaceId, serverName, robloxSecurityToken).ConfigureAwait(false);
+        long? targetServerId =
+            await GetPrivateServerIdAsync(
+                rootPlaceId,
+                serverName,
+                robloxSecurityToken)
+            .ConfigureAwait(false);
+
         if (targetServerId == null)
         {
             return null;
         }
 
-        string detailUrl = $"https://games.roblox.com/v1/vip-servers/{targetServerId.Value}";
-        using var detailRequest = new HttpRequestMessage(HttpMethod.Get, detailUrl);
-        RobloxRequestService.ConfigureRobloxHeaders(detailRequest, robloxSecurityToken);
+        string detailUrl =
+            $"https://games.roblox.com/v1/vip-servers/" +
+            $"{targetServerId.Value}";
 
-        using var detailResponse = await SharedClient.SendAsync(detailRequest).ConfigureAwait(false);
+        using HttpResponseMessage detailResponse =
+            await RobloxRequestService.SendAsync(
+                RobloxRequestService.SharedClient,
+                () => new HttpRequestMessage(
+                    HttpMethod.Get,
+                    detailUrl),
+                robloxSecurityToken,
+                RobloxRequestService.ConfigureRobloxHeaders)
+            .ConfigureAwait(false);
+
         if (!detailResponse.IsSuccessStatusCode)
         {
             return null;
         }
 
-        using var detailStream = await detailResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
-        var detailResult = await JsonSerializer.DeserializeAsync<VipServerResponseDto>(detailStream, JsonOptions).ConfigureAwait(false);
+        VipServerResponseDto? detailResult =
+            await detailResponse.Content
+                .ReadFromJsonAsync<VipServerResponseDto>(
+                    RobloxRequestService.JsonOptions)
+                .ConfigureAwait(false);
 
         return detailResult?.Link;
     }
@@ -187,31 +338,37 @@ public static class RobloxServerUtils
     /// Asynchronously regenerates the join link for a private server by sending a PATCH request
     /// to the Roblox VIP servers endpoint, forcing a new join code and link to be created.
     /// </summary>
-    /// <param name="rootPlaceId">The root place ID of the Roblox experience.</param>
+    /// <param name="rootPlaceId">
+    /// The root place ID of the Roblox experience.
+    /// </param>
     /// <param name="serverName">
     /// The display name of the target private server, or <c>null</c> or empty
     /// to select the first available private server.
     /// </param>
-    /// <param name="robloxSecurityToken">The valid <c>.ROBLOSECURITY</c> authentication cookie token.</param>
+    /// <param name="robloxSecurityToken">
+    /// The valid <c>.ROBLOSECURITY</c> authentication cookie token.
+    /// </param>
     /// <returns>
-    /// The newly generated private server join link, or <c>null</c> if the request fails or the server is not found.
+    /// The newly generated private server join link, or <c>null</c> if the request
+    /// fails or the server is not found.
     /// </returns>
     public static async Task<string?> GeneratePrivateServerLinkAsync(
         string rootPlaceId,
         string? serverName,
         string robloxSecurityToken)
     {
-        if (string.IsNullOrWhiteSpace(robloxSecurityToken))
-        {
-            throw new ArgumentException(
-                "The .ROBLOSECURITY token cannot be null or empty.",
-                nameof(robloxSecurityToken));
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(
+            rootPlaceId);
 
-        long? targetServerId = await GetPrivateServerIdAsync(
-            rootPlaceId,
-            serverName,
-            robloxSecurityToken).ConfigureAwait(false);
+        ArgumentException.ThrowIfNullOrWhiteSpace(
+            robloxSecurityToken);
+
+        long? targetServerId =
+            await GetPrivateServerIdAsync(
+                rootPlaceId,
+                serverName,
+                robloxSecurityToken)
+            .ConfigureAwait(false);
 
         if (targetServerId == null)
         {
@@ -219,11 +376,12 @@ public static class RobloxServerUtils
         }
 
         string patchUrl =
-            $"https://games.roblox.com/v1/vip-servers/{targetServerId.Value}";
+            $"https://games.roblox.com/v1/vip-servers/" +
+            $"{targetServerId.Value}";
 
         using HttpResponseMessage patchResponse =
             await RobloxRequestService.SendAsync(
-                SharedClient,
+                RobloxRequestService.SharedClient,
                 () => new HttpRequestMessage(
                     HttpMethod.Patch,
                     patchUrl)
@@ -233,21 +391,20 @@ public static class RobloxServerUtils
                         newJoinCode = true
                     })
                 },
-                robloxSecurityToken).ConfigureAwait(false);
+                robloxSecurityToken,
+                RobloxRequestService.ConfigureRobloxHeaders)
+            .ConfigureAwait(false);
 
         if (!patchResponse.IsSuccessStatusCode)
         {
             return null;
         }
 
-        using var patchStream =
-            await patchResponse.Content.ReadAsStreamAsync()
+        VipServerResponseDto? patchResult =
+            await patchResponse.Content
+                .ReadFromJsonAsync<VipServerResponseDto>(
+                    RobloxRequestService.JsonOptions)
                 .ConfigureAwait(false);
-
-        var patchResult =
-            await JsonSerializer.DeserializeAsync<VipServerResponseDto>(
-                patchStream,
-                JsonOptions).ConfigureAwait(false);
 
         return patchResult?.Link;
     }

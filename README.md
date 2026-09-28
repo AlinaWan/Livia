@@ -23,6 +23,7 @@ An avant-garde open-source C# automation framework and engine that brings reusab
 * 🍪 VSS-Backed DPAPI Cookie Decryption
 * 🔧 Advanced Windows System Control
 * 🧩 Roblox Multi-Instance Support
+* 👥 Roblox Multi-Account Launching
 * 🔓 Roblox CSRF Token Handling
 * 🔍 Regex-Based Roblox Log Monitoring
 
@@ -132,8 +133,10 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 | `BrowserUtils.GetCookieValue(...)`                        | Retrieves the decrypted value of a cookie stored in a browser.                              |
 | `RobloxServerUtils.GetAllPrivateServerDetailsAsync(...)`  | Retrieves detailed information for all accessible Roblox private servers for an experience. |
 | `RobloxServerUtils.GetPrivateServerIdAsync(...)`          | Retrieves the ID of a Roblox private server for an experience by server name.               |
+| `RobloxServerUtils.GetPrivateServerAccessCodeAsync(...)`  | Retrieves the access code of a Roblox private server for an experience by server name.      |
 | `RobloxServerUtils.GetPrivateServerJoinLinkAsync(...)`    | Retrieves the invite link of a Roblox private server for an experience by server name.      |
-| `RobloxServerUtils.GeneratePrivateServerLinkAsync(...)` | Regenerates the invite link of a Roblox private server for an experience by server name.      |
+| `RobloxServerUtils.GeneratePrivateServerLinkAsync(...)`   | Regenerates the invite link of a Roblox private server for an experience by server name.    |
+| `RobloxPlayerUtils.JoinAccountsAsync(...)`                | Authenticates and launches multiple Roblox accounts into an experience.                     |
 
 </details>
 

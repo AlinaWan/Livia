@@ -156,10 +156,60 @@ dotnet run --project Apps/<Experience>/<Macro>
 | Example Experience                                      | Available Reference Macros              |
 | :------------------------------------------------------ | :-------------------------------------- |
 | [My Cafe](https://www.roblox.com/games/133345376331809) | [Auto Order](Apps/MyCafe/AutoOrder/)    |
-| General                                                 | [Auto Rejoin](Apps/General/AutoRejoin/) |
+| General                                                 | [Auto Rejoin](Apps/General/AutoRejoin/)<br>[Singleton Mutex Closer](Apps/General/SingletonMutexCloser/) |
 | more coming soon™                                       |                                         |
 
 </div>
+
+## FAQ
+
+### What is Livia?
+
+Livia is an open-source C# library for building Roblox automation macros and Windows applications. It provides reusable services, UI components, system utilities, input simulation, screen capture, Roblox utilities, and other Windows-specific functionality.
+
+### Is Livia only for Roblox macros?
+
+No. Although Roblox automation is the primary use case, many of Livia's common UI, input, screen capture, system, and other utilities can be used independently of Roblox.
+
+### What versions of Windows and .NET does Livia support?
+
+Livia currently targets **.NET 10 on Windows 11 (build 22000 or later)**. It uses Windows-specific APIs and WPF, so it is not a cross-platform library.
+
+### Why is the published application relatively large?
+
+Livia uses WPF and Windows-specific APIs, including Windows SDK projections. Depending on how an application is published and which APIs it uses, some Windows runtime assemblies may be included in the application's output.
+
+### Does Livia include ready-made Roblox macros?
+
+The repository may include **Reference Macros**, but these are separate from the Livia library itself. They are intended primarily as developer implementation examples and references for using Livia.
+
+### Are the Reference Macros guaranteed to keep working?
+
+No. Reference Macros are maintained on a volunteer basis and may stop working when their target games or Roblox change. They should be treated as examples/reference implementations rather than guaranteed, continuously maintained automation.
+
+### Does Livia transmit my credentials?
+
+No. **Livia itself does not transmit your credentials or other locally stored authentication data.** Livia is open-source, and its source code is publicly available for anyone to inspect.
+
+However, Livia is a library, and just like any other library, the application consuming it ultimately determines what that application does. If you are using a macro or application created by someone else with Livia, exercise the same caution you would when running any other third-party macro or application.
+
+### Who controls what my macro does?
+
+**You, as the developer and consumer of Livia, determine how your application behaves.** Livia provides the APIs and functionality; your application decides which APIs to use and what actions to perform with them.
+
+Because Livia is open-source, you can inspect its implementation and determine what the library itself does before incorporating it into your application.
+
+### Why are some APIs disabled by default?
+
+Some Livia APIs require explicit developer opt-in because they may have additional requirements, system-level effects, or other implications that developers should explicitly acknowledge. If a required opt-in is missing, Livia reports a diagnostic identifying the MSBuild flag required to use the affected method in IntelliSense and the Visual Studio Error List.
+
+### Does Livia work on Linux or macOS?
+
+No. Livia currently relies on Windows-specific technologies such as WPF, Win32 APIs, DXGI, and Windows Runtime APIs.
+
+### Can I use Livia commercially?
+
+Yes, subject to the terms of the MIT license. See the repository's license for the complete terms.
 
 ## Troubleshooting
 

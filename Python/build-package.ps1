@@ -1,8 +1,21 @@
 param(
-    [string]$Python = "python"
+    [string]$Python = "python",
+
+    [Parameter(Mandatory = $true)]
+    [string]$Version,
+
+    [Parameter(Mandatory = $true)]
+    [int]$Build,
+
+    [Parameter(Mandatory = $true)]
+    [int]$Revision
 )
 
 $ErrorActionPreference = "Stop"
+
+if ($Version -notmatch '^\d+\.\d+\.\d+\.\d+$') {
+    throw "Invalid version: $Version"
+}
 
 $pythonCommand = Get-Command $Python -ErrorAction Stop
 $Python = $pythonCommand.Source
@@ -10,47 +23,48 @@ $Python = $pythonCommand.Source
 $pythonDirectory = $PSScriptRoot
 $repositoryDirectory = Split-Path $pythonDirectory -Parent
 
-$liviaProject = Join-Path $repositoryDirectory "Livia\Livia.csproj"
-$liviaOutput = Join-Path $repositoryDirectory "Livia\bin\Release\net10.0-windows10.0.22000.0"
-$liviaProjectContent = Get-Content $liviaProject -Raw
+$liviaProject = Join-Path `
+    $repositoryDirectory `
+    "Livia\Livia.csproj"
 
-$assemblyVersionMatch = [regex]::Match(
-    $liviaProjectContent,
-    '<AssemblyVersion>([^<]+)</AssemblyVersion>'
-)
-
-if (-not $assemblyVersionMatch.Success) {
-    throw "Could not find AssemblyVersion in $liviaProject."
-}
-
-$assemblyVersion = $assemblyVersionMatch.Groups[1].Value
-
-if ($assemblyVersion -notmatch '^\d+\.\d+\.\d+\.\d+$') {
-    throw "Invalid AssemblyVersion: $assemblyVersion"
-}
-
-$pythonVersion = $assemblyVersion -replace '\.0$', ''
-
-Write-Host "Livia version: $assemblyVersion"
-Write-Host "Python package version: $pythonVersion"
+$liviaOutput = Join-Path `
+    $repositoryDirectory `
+    "Livia\bin\Release\net10.0-windows10.0.22000.0"
 
 $packageDirectory = Join-Path $pythonDirectory "livia"
-$nativeDirectory = Join-Path $packageDirectory "Native\ScreenCapture"
+$nativeDirectory = Join-Path `
+    $packageDirectory `
+    "Native\ScreenCapture"
+
+Write-Host "Livia version: $Version"
 
 Write-Host "Preparing Python package..."
 
-New-Item -ItemType Directory -Force -Path $packageDirectory | Out-Null
-New-Item -ItemType Directory -Force -Path $nativeDirectory | Out-Null
+New-Item `
+    -ItemType Directory `
+    -Force `
+    -Path $packageDirectory |
+    Out-Null
+
+New-Item `
+    -ItemType Directory `
+    -Force `
+    -Path $nativeDirectory |
+    Out-Null
 
 @"
-__version__ = "$pythonVersion"
+__version__ = "$Version"
 "@ | Set-Content `
     (Join-Path $packageDirectory "_version.py") `
     -Encoding utf8
 
 Write-Host "Building Livia..."
 
-dotnet build $liviaProject --configuration Release
+dotnet build `
+    $liviaProject `
+    --configuration Release `
+    /p:LiviaBuild=$Build `
+    /p:LiviaRevision=$Revision
 
 if ($LASTEXITCODE -ne 0) {
     throw "Livia build failed."
@@ -62,8 +76,12 @@ Copy-Item `
     -Force
 
 Copy-Item `
-    (Join-Path $liviaOutput "Native\ScreenCapture\Livia.Native.DxgiFrameCapture.dll") `
-    (Join-Path $nativeDirectory "Livia.Native.DxgiFrameCapture.dll") `
+    (Join-Path `
+        $liviaOutput `
+        "Native\ScreenCapture\Livia.Native.DxgiFrameCapture.dll") `
+    (Join-Path `
+        $nativeDirectory `
+        "Livia.Native.DxgiFrameCapture.dll") `
     -Force
 
 @"

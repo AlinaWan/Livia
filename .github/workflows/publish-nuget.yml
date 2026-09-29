@@ -1,25 +1,17 @@
 name: Publish to NuGet
 
 on:
-  workflow_dispatch:
-    inputs:
-      release_name:
-        description: "Name of the release (defaults to the tag)"
-        required: false
-        type: string
-      prerelease:
-        description: "Is this a prerelease?"
-        required: false
-        default: true
-        type: boolean
-      dry_run:
-        description: "Build everything but do not publish"
-        required: false
-        default: true
-        type: boolean
-
   workflow_call:
     inputs:
+      version:
+        required: true
+        type: string
+      build:
+        required: true
+        type: string
+      revision:
+        required: true
+        type: string
       release_name:
         required: false
         type: string
@@ -36,7 +28,7 @@ on:
 jobs:
   publish:
     runs-on: windows-2025-vs2026
-    
+
     permissions:
       id-token: write
       contents: write
@@ -52,27 +44,26 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
-      - name: Get versions
-        id: version
+      - name: Display version
         shell: pwsh
         run: |
-          $assemblyVersion = dotnet msbuild Livia/Livia.csproj `
-            -getProperty:AssemblyVersion
-
-          $packageVersion = dotnet msbuild Livia/Livia.csproj `
-            -getProperty:PackageVersion
-
-          "assembly_version=$assemblyVersion" >> $env:GITHUB_OUTPUT
-          "package_version=$packageVersion" >> $env:GITHUB_OUTPUT
-
-          Write-Host "Assembly version: $assemblyVersion"
-          Write-Host "Package version: $packageVersion"
+          Write-Host "Livia version: ${{ inputs.version }}"
 
       - name: Build project
-        run: dotnet build Livia/Livia.csproj -c Release
+        run: >
+          dotnet build Livia/Livia.csproj
+          -c Release
+          /p:LiviaBuild=${{ inputs.build }}
+          /p:LiviaRevision=${{ inputs.revision }}
 
       - name: Pack NuGet package
-        run: dotnet pack Livia/Livia.csproj -c Release --no-build -o ./artifacts
+        run: >
+          dotnet pack Livia/Livia.csproj
+          -c Release
+          --no-build
+          -o ./artifacts
+          /p:LiviaBuild=${{ inputs.build }}
+          /p:LiviaRevision=${{ inputs.revision }}
 
       - name: NuGet login
         if: ${{ !inputs.dry_run }}
@@ -83,16 +74,22 @@ jobs:
 
       - name: Publish to NuGet
         if: ${{ !inputs.dry_run }}
+        shell: pwsh
         run: |
-          $package = Get-ChildItem ./artifacts/*.nupkg | Select-Object -First 1
-          dotnet nuget push $package.FullName --source https://api.nuget.org/v3/index.json --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}"
+          $package = Get-ChildItem ./artifacts/*.nupkg |
+            Select-Object -First 1
+
+          dotnet nuget push `
+            $package.FullName `
+            --source https://api.nuget.org/v3/index.json `
+            --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}"
 
       - name: Create GitHub Release
         if: ${{ inputs.dry_run == false }}
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: v${{ steps.version.outputs.assembly_version }}
-          name: ${{ inputs.release_name != '' && inputs.release_name || format('v{0}', steps.version.outputs.assembly_version) }}
+          tag_name: v${{ inputs.version }}
+          name: ${{ inputs.release_name != '' && inputs.release_name || format('v{0}', inputs.version) }}
           generate_release_notes: true
           prerelease: ${{ inputs.prerelease }}
           files: ./artifacts/*.nupkg
@@ -101,7 +98,7 @@ jobs:
         if: ${{ inputs.dry_run == true }}
         uses: actions/upload-artifact@v7
         with:
-          name: nuget-package-${{ steps.version.outputs.package_version }}
+          name: nuget-package-${{ inputs.version }}
           path: |
             ./artifacts/*.nupkg
           retention-days: 7

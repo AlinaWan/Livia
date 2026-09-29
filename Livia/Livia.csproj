@@ -10,7 +10,14 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-    <AssemblyVersion>1.22.0.0</AssemblyVersion>
+    <LiviaMajorMinor>1.22</LiviaMajorMinor>
+
+    <!-- Build.Revision is calculated by CI and should not be committed to source control -->
+    <LiviaBuild>0</LiviaBuild>
+    <LiviaRevision>0</LiviaRevision>
+
+    <AssemblyVersion>$(LiviaMajorMinor).$(LiviaBuild).$(LiviaRevision)</AssemblyVersion>
+
     <PackageVersion>$(AssemblyVersion)</PackageVersion>
 
     <PackageId>Livia</PackageId>

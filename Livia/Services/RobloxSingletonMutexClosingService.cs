@@ -18,6 +18,8 @@ public sealed class RobloxSingletonMutexClosingService : IDisposable
 {
     private const string RobloxProcessName = "RobloxPlayerBeta";
 
+    // handle64.exe was used to reverse-engineer these handle names
+    // https://learn.microsoft.com/en-us/sysinternals/downloads/handle
     private const string SingletonMutexName =
         @"\Sessions\1\BaseNamedObjects\ROBLOX_singletonMutex";
 

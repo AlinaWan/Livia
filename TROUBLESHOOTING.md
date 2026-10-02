@@ -14,13 +14,13 @@ Some Livia APIs require explicit developer opt-in because they may have addition
 #### Diagnostic
 
 ```text
-LIVIA001 The API '...' requires explicit opt-in. Set '...' to 'true' in the project file.
+error LIVIA001: The API '...' requires explicit opt-in. Set '...' to 'true' in the project file.
 ```
 
 Example:
 
 ```text
-LIVIA001 The API 'GetCookieValue' requires explicit opt-in. Set 'LiviaEnableBrowserCookieDecryption' to 'true' in the project file.
+error LIVIA001: LIVIA001 The API 'GetCookieValue' requires explicit opt-in. Set 'LiviaEnableBrowserCookieDecryption' to 'true' in the project file.
 ```
 
 #### Why am I seeing this?
@@ -57,3 +57,75 @@ dotnet build -p:LiviaEnableBrowserCookieDecryption=true
 ```
 
 The exact property name is provided in the diagnostic message.
+
+### LIVIA002 (Livia API is experimental)
+
+**Severity:** Warning
+
+Some Livia APIs are marked as experimental because they are still under
+development and may change significantly, be redesigned, or be removed
+in future releases. Experimental APIs should be used with the expectation
+that source or behavioral changes may be required when updating Livia.
+
+Livia reports this diagnostic for APIs marked with C#'s
+`[Experimental]` attribute.
+
+#### Diagnostic
+
+```text
+warning LIVIA002: '...' is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+````
+
+Example:
+
+```text
+warning LIVIA002: 'Livia.Services.Federation.RobloxFederationClient' is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+```
+
+#### Why am I seeing this?
+
+This diagnostic is reported when an application uses a Livia API that has
+been marked as experimental.
+
+Experimental APIs are provided for evaluation and early use but are not
+considered stable Livia APIs. Their APIs, behavior, or availability may
+change between releases.
+
+For example, an application may directly use an experimental API:
+
+```csharp
+var client = new RobloxFederationClient();
+```
+
+without explicitly suppressing the experimental diagnostic.
+
+#### How do I fix it?
+
+If you are comfortable using the experimental API and accept that it may
+change, break, or be removed in a future Livia release, suppress `LIVIA002`.
+
+You can suppress the diagnostic for a specific use with C#'s standard
+`Experimental` diagnostic suppression mechanisms.
+
+For example, to suppress `LIVIA002` for an entire project, add it to
+`NoWarn` in the project file:
+
+```xml
+<PropertyGroup>
+    <NoWarn>$(NoWarn);LIVIA002</NoWarn>
+</PropertyGroup>
+```
+
+Alternatively, suppress it for a specific location using the standard
+C# pragma:
+
+```csharp
+#pragma warning disable LIVIA002
+
+var client = new RobloxFederationClient();
+
+#pragma warning restore LIVIA002
+```
+
+Suppressing this diagnostic does not make the API stable or guarantee
+compatibility with future Livia releases.

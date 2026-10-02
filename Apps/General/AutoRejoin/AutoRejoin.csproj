@@ -1,23 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
-		<TargetFramework>net10.0-windows10.0.22000.0</TargetFramework>
-		<UseWPF>true</UseWPF>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.22000.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-		<AssemblyVersion>1.0.0.4</AssemblyVersion>
-		<ApplicationIcon>..\..\..\Livia\Assets\KaarinaaIcon.ico</ApplicationIcon>
-	</PropertyGroup>
+    <AssemblyVersion>1.0.0.4</AssemblyVersion>
+    <ApplicationIcon>..\..\..\Livia\Assets\KaarinaaIcon.ico</ApplicationIcon>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Livia" Version="1.19.*" />
-	</ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="Livia" Version="1.19.*" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<AssemblyMetadata Include="BuiltWith" Value="Livia" />
-	</ItemGroup>
+    <ItemGroup>
+      <AssemblyMetadata Include="BuiltWith" Value="Livia" />
+    </ItemGroup>
 
 </Project>

@@ -22,9 +22,11 @@ For example:
 * `1.22.1234.5000 → 1.22.1235.0` — A new release on the following UTC day.
 * `1.22.1234.5000 → 1.22.1234.5001` — A subsequent release on the same UTC day.
 
-A breaking change to Livia's APIs or behavior that affects applications using Livia is a Major version change. Changes to external applications or games do not affect Livia's version unless accommodating those changes requires a breaking change to Livia itself.
+A breaking change to Livia's APIs or behavior that affects applications using Livia is a Major version change. Changes to external applications or games
+do not affect Livia's version unless accommodating those changes requires a breaking change to Livia itself.
 
 If an older application could run on the new version of Livia and use the same APIs without modification or error, it is likely not a breaking change.
+Changes to APIs marked as experimental are an exception because experimental APIs are not guaranteed to remain compatible.
 
 ### Livia Reference Macros
 

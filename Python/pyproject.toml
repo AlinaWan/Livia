@@ -27,3 +27,7 @@ livia = [
     "runtimeconfig.json",
     "Native/ScreenCapture/Livia.Native.DxgiFrameCapture.dll",
 ]
+
+[project.urls]
+Homepage = "https://github.com/AlinaWan/Livia"
+Repository = "https://github.com/AlinaWan/Livia"

@@ -20,7 +20,7 @@ error LIVIA001: The API '...' requires explicit opt-in. Set '...' to 'true' in t
 Example:
 
 ```text
-error LIVIA001: LIVIA001 The API 'GetCookieValue' requires explicit opt-in. Set 'LiviaEnableBrowserCookieDecryption' to 'true' in the project file.
+error LIVIA001: The API 'GetCookieValue' requires explicit opt-in. Set 'LiviaEnableBrowserCookieDecryption' to 'true' in the project file.
 ```
 
 #### Why am I seeing this?
@@ -46,14 +46,14 @@ For a project file, add the property to a `<PropertyGroup>` in your `.csproj`:
 
 ```xml
 <PropertyGroup>
-    <LiviaEnableBrowserCookieDecryption>true</LiviaEnableBrowserCookieDecryption>
+    <LiviaEnable...>true</LiviaEnable...>
 </PropertyGroup>
 ```
 
 Alternatively, pass the property directly to the .NET CLI using the `-p:` option:
 
 ```text
-dotnet build -p:LiviaEnableBrowserCookieDecryption=true
+dotnet build -p:LiviaEnable...=true
 ```
 
 The exact property name is provided in the diagnostic message.
@@ -122,7 +122,7 @@ C# pragma:
 ```csharp
 #pragma warning disable LIVIA002
 
-var client = new RobloxFederationClient();
+var foo = SomeExperimentalApi();
 
 #pragma warning restore LIVIA002
 ```

@@ -69,8 +69,8 @@ jobs:
       build: ${{ needs.version.outputs.build }}
       revision: ${{ needs.version.outputs.revision }}
       release_name: ${{ inputs.release_name }}
-      prerelease: ${{ github.event_name == 'push' && false || inputs.prerelease }}
-      dry_run: ${{ github.event_name == 'push' && false || inputs.dry_run }}
+      prerelease: ${{ github.event_name != 'push' && inputs.prerelease || false }}
+      dry_run: ${{ github.event_name != 'push' && inputs.dry_run || false }}
 
     secrets: inherit
 

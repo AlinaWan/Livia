@@ -180,7 +180,7 @@ Livia currently targets **.NET 10 on Windows 11 (build 22000 or later)**. It use
 
 ### Why is the published application relatively large?
 
-Livia uses WPF and Windows-specific APIs, including Windows SDK projections. Depending on how an application is published and which APIs it uses, some Windows runtime assemblies may be included in the application's output.
+Livia uses **net10.0-windows10.0.22000.0**, which includes WinRT projections. This is a quirk of .NET to include the entire WinRT projection in the published application, even if only a small portion or none of it is used. If you are **100%** sure your application does not use any WinRT APIs, consider adding a target hook to strip the WinRT projection if you want to reduce the size of your published application.
 
 ### Does Livia include ready-made Roblox macros?
 

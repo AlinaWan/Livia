@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-    <AssemblyVersion>1.0.1.1</AssemblyVersion>
+    <AssemblyVersion>1.0.1.2</AssemblyVersion>
 
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
@@ -15,6 +15,13 @@
   <ItemGroup>
     <PackageReference Include="Livia" Version="1.20.*" />
   </ItemGroup>
+
+  <Target Name="StripWinRTProjections" BeforeTargets="GenerateSingleFileBundle">
+    <ItemGroup>
+      <!-- This is admittedly pretty hacky but blame .NET for including it just because the target framework includes it -->
+      <FilesToBundle Condition="'%(Filename)' == 'Microsoft.Windows.SDK.NET'" Remove="@(FilesToBundle)" />
+    </ItemGroup>
+  </Target>
 
   <ItemGroup>
     <AssemblyMetadata Include="BuiltWith" Value="Livia" />

@@ -10,7 +10,7 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-    <LiviaMajorMinor>1.22</LiviaMajorMinor>
+    <LiviaMajorMinor>1.23</LiviaMajorMinor>
 
     <!-- Build.Revision is calculated by CI and should not be committed to source control -->
     <LiviaBuild>0</LiviaBuild>

@@ -6,9 +6,7 @@
 /// <remarks>
 /// Thank you to the following source for the virtual key codes:
 /// https://www.pinvoke.net/default.aspx/Enums/VirtualKeys.html
-/// Drinks are on me if we ever meet in person.
 /// </remarks>
-///
 public enum VirtualKeys
     : ushort
 {

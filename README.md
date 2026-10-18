@@ -137,6 +137,8 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 | `RobloxServerUtils.GetPrivateServerJoinLinkAsync(...)`    | Retrieves the invite link of a Roblox private server for an experience by server name.      |
 | `RobloxServerUtils.GeneratePrivateServerLinkAsync(...)`   | Regenerates the invite link of a Roblox private server for an experience by server name.    |
 | `RobloxPlayerUtils.JoinAccountsAsync(...)`                | Authenticates and launches multiple Roblox accounts into an experience.                     |
+| `MessageBoxUtils.Show(...)`                               | Displays a native Windows message box synchronously.                                        |
+| `MessageBoxUtils.ShowAsync(...)`                          | Displays a native Windows message box asynchronously.                                       |
 
 </details>
 

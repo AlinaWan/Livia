@@ -5,40 +5,40 @@ using System.Text;
 
 namespace Livia.Native;
 
-internal static class AdvApi32
+internal static partial class AdvApi32
 {
     internal const uint TOKEN_ADJUST_PRIVILEGES = 0x0020;
     internal const uint TOKEN_QUERY = 0x0008;
     internal const uint SE_PRIVILEGE_ENABLED = 0x00000002;
     internal const string SE_SHUTDOWN_NAME = "SeShutdownPrivilege";
 
-    [DllImport("advapi32.dll", SetLastError = true)]
+    [LibraryImport("advapi32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool OpenProcessToken(
-            IntPtr ProcessHandle,
-            uint DesiredAccess,
-            out IntPtr TokenHandle);
+    internal static partial bool OpenProcessToken(
+        IntPtr ProcessHandle,
+        uint DesiredAccess,
+        out IntPtr TokenHandle);
 
-    [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    [LibraryImport("advapi32.dll", EntryPoint = "LookupPrivilegeValueW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool LookupPrivilegeValueW(
-        string lpSystemName,
-        string lpName,
+    internal static partial bool LookupPrivilegeValueW(
+        string? lpSystemName,
+        string? lpName,
         out LUID lpLuid);
 
-    [DllImport("advapi32.dll", SetLastError = true)]
+    [LibraryImport("advapi32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool AdjustTokenPrivileges(
-    IntPtr TokenHandle,
-    [MarshalAs(UnmanagedType.Bool)] bool DisableAllPrivileges,
-    ref TOKEN_PRIVILEGES NewState,
-    uint BufferLength,
-    ref TOKEN_PRIVILEGES PreviousState,
-    out uint ReturnLength);
+    internal static partial bool AdjustTokenPrivileges(
+        IntPtr TokenHandle,
+        [MarshalAs(UnmanagedType.Bool)] bool DisableAllPrivileges,
+        ref TOKEN_PRIVILEGES NewState,
+        uint BufferLength,
+        ref TOKEN_PRIVILEGES PreviousState,
+        out uint ReturnLength);
 
-    [DllImport("advapi32.dll", SetLastError = true)]
+    [LibraryImport("advapi32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool AdjustTokenPrivileges(
+    internal static partial bool AdjustTokenPrivileges(
         IntPtr TokenHandle,
         [MarshalAs(UnmanagedType.Bool)] bool DisableAllPrivileges,
         ref TOKEN_PRIVILEGES NewState,
@@ -46,20 +46,22 @@ internal static class AdvApi32
         IntPtr PreviousState,
         out uint ReturnLength);
 
-    [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    [LibraryImport("advapi32.dll", EntryPoint = "InitiateSystemShutdownExW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool InitiateSystemShutdownExW(
-        string lpMachineName,
-        string lpMessage,
+    internal static partial bool InitiateSystemShutdownExW(
+        string? lpMachineName,
+        string? lpMessage,
         uint dwTimeout,
         [MarshalAs(UnmanagedType.Bool)] bool bForceAppsClosed,
         [MarshalAs(UnmanagedType.Bool)] bool bRebootAfterShutdown,
         uint dwReason);
 
-    [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    [LibraryImport("advapi32.dll", EntryPoint = "AbortSystemShutdownW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool AbortSystemShutdownW(
-        string lpMachineName);
+    internal static partial bool AbortSystemShutdownW(
+        string? lpMachineName);
+
+    [StructLayout(LayoutKind.Sequential)]
     internal struct LUID
     {
         public uint LowPart;

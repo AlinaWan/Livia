@@ -4,7 +4,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace Livia.Native;
 
-internal static class Kernel32
+internal static partial class Kernel32
 {
     internal const uint GENERIC_READ = 0x80000000;
     internal const uint GENERIC_WRITE = 0x40000000;
@@ -25,18 +25,15 @@ internal static class Kernel32
 
     internal static readonly IntPtr INVALID_HANDLE_VALUE = new(-1);
 
-    [DllImport("kernel32.dll")]
-    internal static extern IntPtr GetCurrentProcess();
+    [LibraryImport("kernel32.dll")]
+    internal static partial IntPtr GetCurrentProcess();
 
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool CloseHandle(IntPtr hObject);
+    internal static partial bool CloseHandle(IntPtr hObject);
 
-    [DllImport(
-        "kernel32.dll",
-        CharSet = CharSet.Unicode,
-        SetLastError = true)]
-    internal static extern IntPtr CreateFileW(
+    [LibraryImport("kernel32.dll", EntryPoint = "CreateFileW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+    internal static partial IntPtr CreateFileW(
         string lpFileName,
         uint dwDesiredAccess,
         uint dwShareMode,
@@ -45,45 +42,42 @@ internal static class Kernel32
         uint dwFlagsAndAttributes,
         IntPtr hTemplateFile);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool ReadFile(
+    internal static partial bool ReadFile(
         IntPtr hFile,
         IntPtr lpBuffer,
         uint nNumberOfBytesToRead,
         out uint lpNumberOfBytesRead,
         IntPtr lpOverlapped);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool WriteFile(
+    internal static partial bool WriteFile(
         IntPtr hFile,
         IntPtr lpBuffer,
         uint nNumberOfBytesToWrite,
         out uint lpNumberOfBytesWritten,
         IntPtr lpOverlapped);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool FlushFileBuffers(
+    internal static partial bool FlushFileBuffers(
         IntPtr hFile);
 
-    [DllImport("kernel32.dll")]
-    internal static extern uint GetCurrentThreadId();
+    [LibraryImport("kernel32.dll")]
+    internal static partial uint GetCurrentThreadId();
 
-    [DllImport(
-        "kernel32.dll",
-        CharSet = CharSet.Unicode,
-        SetLastError = true)]
-    internal static extern SafeWaitHandle CreateWaitableTimerExW(
+    [LibraryImport("kernel32.dll", EntryPoint = "CreateWaitableTimerExW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+    internal static partial SafeWaitHandle CreateWaitableTimerExW(
         IntPtr lpTimerAttributes,
         string? lpTimerName,
         uint dwFlags,
         uint dwDesiredAccess);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool SetWaitableTimer(
+    internal static partial bool SetWaitableTimer(
         SafeWaitHandle hTimer,
         ref FILETIME pDueTime,
         int lPeriod,
@@ -91,25 +85,25 @@ internal static class Kernel32
         IntPtr lpArgToCompletionRoutine,
         [MarshalAs(UnmanagedType.Bool)] bool fResume);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool CancelWaitableTimer(
+    internal static partial bool CancelWaitableTimer(
         SafeWaitHandle hTimer);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
-    internal static extern uint WaitForSingleObject(
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    internal static partial uint WaitForSingleObject(
         SafeWaitHandle hHandle,
         uint dwMilliseconds);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
-    internal static extern IntPtr OpenProcess(
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    internal static partial IntPtr OpenProcess(
         uint desiredAccess,
         [MarshalAs(UnmanagedType.Bool)] bool inheritHandle,
         int processId);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool DuplicateHandle(
+    internal static partial bool DuplicateHandle(
         IntPtr sourceProcessHandle,
         IntPtr sourceHandle,
         IntPtr targetProcessHandle,

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Livia.Native;
 
-internal static class User32
+internal static partial class User32
 {
     internal const uint EVENT_SYSTEM_FOREGROUND = 0x0003;
 
@@ -39,6 +39,8 @@ internal static class User32
     internal const int SW_SHOW = 5;
     internal const int SW_RESTORE = 9;
 
+    // Note: Delegates passed to unmanaged code (like SetWinEventHook) 
+    // are still fully supported alongside LibraryImport.
     internal delegate void WinEventDelegate(
         IntPtr hook,
         uint eventType,
@@ -48,8 +50,8 @@ internal static class User32
         uint eventThread,
         uint eventTime);
 
-    [DllImport("user32.dll", SetLastError = true)]
-    internal static extern IntPtr SetWinEventHook(
+    [LibraryImport("user32.dll", SetLastError = true)]
+    internal static partial IntPtr SetWinEventHook(
         uint eventMin,
         uint eventMax,
         IntPtr hmodWinEventProc,
@@ -58,96 +60,103 @@ internal static class User32
         uint threadId,
         uint flags);
 
-    [DllImport("user32.dll")]
+    [LibraryImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool UnhookWinEvent(
+    internal static partial bool UnhookWinEvent(
         IntPtr hook);
 
-    [DllImport("user32.dll")]
-    internal static extern IntPtr GetForegroundWindow();
+    [LibraryImport("user32.dll")]
+    internal static partial IntPtr GetForegroundWindow();
 
-    [DllImport("user32.dll")]
-    internal static extern uint GetWindowThreadProcessId(
+    [LibraryImport("user32.dll")]
+    internal static partial uint GetWindowThreadProcessId(
         IntPtr hwnd,
         out uint processId);
 
-    [DllImport("user32.dll")]
+    [LibraryImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool PostThreadMessage(
+    internal static partial bool PostThreadMessage(
         uint threadId,
         uint message,
         IntPtr wParam,
         IntPtr lParam);
 
-    [DllImport("user32.dll", SetLastError = true)]
+    [LibraryImport("user32.dll", EntryPoint = "PostThreadMessageW", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool PostThreadMessageW(
+    internal static partial bool PostThreadMessageW(
         uint threadId,
         uint msg,
         UIntPtr wParam,
         IntPtr lParam);
 
-    [DllImport("user32.dll", SetLastError = true)]
+    [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool RegisterHotKey(
+    internal static partial bool RegisterHotKey(
         IntPtr hWnd,
         int id,
         uint fsModifiers,
         uint vk);
 
-    [DllImport("user32.dll", SetLastError = true)]
+    [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool UnregisterHotKey(
+    internal static partial bool UnregisterHotKey(
         IntPtr hWnd,
         int id);
 
-    [DllImport("user32.dll", SetLastError = true)]
-    internal static extern int GetMessageW(
+    [LibraryImport("user32.dll", EntryPoint = "GetMessageW", SetLastError = true)]
+    internal static partial int GetMessageW(
         out MSG lpMsg,
         IntPtr hWnd,
         uint wMsgFilterMin,
         uint wMsgFilterMax);
 
-    [DllImport("user32.dll")]
+    [LibraryImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool TranslateMessage(
+    internal static partial bool TranslateMessage(
         ref MSG lpMsg);
 
-    [DllImport("user32.dll")]
-    internal static extern IntPtr DispatchMessageW(
+    [LibraryImport("user32.dll", EntryPoint = "DispatchMessageW")]
+    internal static partial IntPtr DispatchMessageW(
         ref MSG lpMsg);
 
-    [DllImport("user32.dll")]
-    internal static extern int GetMessage(
+    [LibraryImport("user32.dll", EntryPoint = "GetMessageW")]
+    internal static partial int GetMessage(
         out MSG message,
         IntPtr hwnd,
         uint filterMin,
         uint filterMax);
 
-    [DllImport("user32.dll")]
-    internal static extern int GetSystemMetrics(int nIndex);
+    [LibraryImport("user32.dll")]
+    internal static partial int GetSystemMetrics(int nIndex);
 
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    internal static extern uint MapVirtualKeyW(uint uCode, uint uMapType);
+    [LibraryImport("user32.dll", EntryPoint = "MapVirtualKeyW")]
+    internal static partial uint MapVirtualKeyW(uint uCode, uint uMapType);
 
-    [DllImport("user32.dll", SetLastError = true)]
-    internal static extern uint SendInput(uint nInputs, [In] INPUT[] pInputs, int cbSize);
+    [LibraryImport("user32.dll", SetLastError = true)]
+    internal static partial uint SendInput(uint nInputs, [In] INPUT[] pInputs, int cbSize);
 
-    [DllImport("user32.dll")]
+    [LibraryImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool IsIconic(
-    IntPtr hwnd);
+    internal static partial bool IsIconic(
+        IntPtr hwnd);
 
-    [DllImport("user32.dll")]
+    [LibraryImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool ShowWindow(
+    internal static partial bool ShowWindow(
         IntPtr hwnd,
         int command);
 
-    [DllImport("user32.dll")]
+    [LibraryImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static extern bool SetForegroundWindow(
+    internal static partial bool SetForegroundWindow(
         IntPtr hwnd);
+
+    [LibraryImport("user32.dll", EntryPoint = "MessageBoxW", StringMarshalling = StringMarshalling.Utf16)]
+    internal static partial int MessageBoxW(
+        nint hWnd,
+        string? lpText,
+        string? lpCaption,
+        uint uType);
 
     [StructLayout(LayoutKind.Sequential)]
     internal struct MSG

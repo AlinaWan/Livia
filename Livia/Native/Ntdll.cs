@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Livia.Native;
 
-internal static class Ntdll
+internal static partial class Ntdll
 {
     internal const int SYSTEM_EXTENDED_HANDLE_INFORMATION = 64;
     internal const int OBJECT_NAME_INFORMATION = 1;
@@ -32,15 +32,15 @@ internal static class Ntdll
         public IntPtr Buffer;
     }
 
-    [DllImport("ntdll.dll")]
-    internal static extern uint NtQuerySystemInformation(
+    [LibraryImport("ntdll.dll")]
+    internal static partial uint NtQuerySystemInformation(
         int systemInformationClass,
         IntPtr systemInformation,
         int systemInformationLength,
         out int returnLength);
 
-    [DllImport("ntdll.dll")]
-    internal static extern uint NtQueryObject(
+    [LibraryImport("ntdll.dll")]
+    internal static partial uint NtQueryObject(
         IntPtr handle,
         int objectInformationClass,
         IntPtr objectInformation,

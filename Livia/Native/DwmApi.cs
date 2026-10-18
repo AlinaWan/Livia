@@ -5,12 +5,12 @@ using System.Windows.Media;
 
 namespace Livia.Native;
 
-internal static class DwmApi
+internal static partial class DwmApi
 {
     internal const uint DWMWA_CAPTION_COLOR = 35;
 
-    [DllImport("dwmapi.dll")]
-    internal static extern int DwmSetWindowAttribute(
+    [LibraryImport("dwmapi.dll")]
+    internal static partial int DwmSetWindowAttribute(
         IntPtr hwnd,
         uint attribute,
         ref int value,

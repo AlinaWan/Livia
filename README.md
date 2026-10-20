@@ -102,16 +102,33 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 <details>
   <summary>Click to expand</summary>
 
-| API                                  | Description                                                                   |
-| :----------------------------------- | ----------------------------------------------------------------------------- |
-| `DxgiFrameProvider`                  | Captures a screen region directly from a DXGI GPU staging buffer.             |
-| `WindowFocusMonitor`                 | Monitors a process by executable name and raises an event on focus change.    |
-| `RobloxLogMonitor`                   | Monitors a Roblox log file by a regex pattern and invokes callbacks on match. |
-| `RobloxSingletonMutexClosingService` | Monitors Roblox processes and closes their singleton mutex and event handles. |
-| `WindowsOcrService`                  | Provides optical character recognition using the native Windows OCR engine.   |
-| `DiscordWebhookService`              | Sends payloads to a Discord channel via webhooks.                             |
-| `SmsService`                         | Sends SMS text messages to a specified phone number.                          |
-| `WaitableTimerService`               | Schedules asynchronous callbacks for a specified UTC time or date.            |
+| API                                  | Description                                                                    |
+| :----------------------------------- | ------------------------------------------------------------------------------ |
+| `DxgiFrameProvider`                  | Captures a screen region directly from a DXGI GPU staging buffer.              |
+| `WindowFocusMonitor`                 | Monitors a process by executable name and raises an event on focus change.     |
+| `RobloxLogMonitor`                   | Monitors a Roblox log file by a regex pattern and invokes callbacks on match.  |
+| `RobloxSingletonMutexClosingService` | Monitors Roblox processes and closes their singleton mutex and event handles.  |
+| `WindowsOcrService`                  | Provides optical character recognition using the native Windows OCR engine.    |
+| `DiscordWebhookService`              | Sends payloads to a Discord channel via webhooks.                              |
+| `SmsService`                         | Sends SMS text messages to a specified phone number.                           |
+| `WaitableTimerService`               | Schedules asynchronous callbacks for a specified UTC time or date.             |
+| `FileSystemWatcherService`           | Monitors filesystem changes to files and directories and raises change events. |
+
+</details>
+
+### Configuration
+
+<details>
+  <summary>Click to expand</summary>
+
+| API                                | Description                                                                                                                      |
+| :--------------------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
+| `ConfigurationManager`             | Loads, validates, saves, and watches schema-defined JSON configuration files.                                                    |
+| `ConfigurationSchema`              | Defines the fields, types, defaults, and validation rules for a configuration.                                                   |
+| `ConfigurationField`               | Defines an individual configuration field, including its type, default value, and optional validation and expression evaluation. |
+| `ConfigurationDocument`            | Provides access to a loaded configuration as a JSON document.                                                                    |
+| `ConfigurationLoadOptions`         | Configures expression evaluation, expression variables, and reload behavior.                                                     |
+| `ConfigurationExpressionEvaluator` | Evaluates supported arithmetic expressions with optional caller-defined numeric variables.                                       |
 
 </details>
 
@@ -120,25 +137,26 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 <details>
   <summary>Click to expand</summary>
 
-| API                                                       | Description                                                                                 |
-| :-------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `WindowUtils.ForceFocusWindow(...)`                       | Forces the target application window to the foreground and brings it into focus.            |
-| `SystemUtils.InitiateSystemShutdown(...)`                 | Requests a system shutdown with a specified timeout and display message.                    |
-| `SystemUtils.AbortSystemShutdown(...)`                    | Aborts a previously scheduled system shutdown request.                                      |
-| `SystemUtils.IsInRole(...)`                               | Gets whether the current process is running under the specified built-in Windows role.      |
-| `SystemUtils.GetRoles(...)`                               | Gets all built-in Windows roles that the current process is running under.                  |
-| `NetworkUtils.SetRadioStateAsync(...)`                    | Requests a change to the operational state of a specified radio kind.                       |
-| `NetworkUtils.GetRadioStateAsync(...)`                    | Gets the current operational state of a specified radio kind.                               |
-| `IpUtils.GetIpInfoAsync(...)`                             | Retrieves information for a specified internet protocol address.                            |
-| `BrowserUtils.GetCookieValue(...)`                        | Retrieves the decrypted value of a cookie stored in a browser.                              |
-| `RobloxServerUtils.GetAllPrivateServerDetailsAsync(...)`  | Retrieves detailed information for all accessible Roblox private servers for an experience. |
-| `RobloxServerUtils.GetPrivateServerIdAsync(...)`          | Retrieves the ID of a Roblox private server for an experience by server name.               |
-| `RobloxServerUtils.GetPrivateServerAccessCodeAsync(...)`  | Retrieves the access code of a Roblox private server for an experience by server name.      |
-| `RobloxServerUtils.GetPrivateServerJoinLinkAsync(...)`    | Retrieves the invite link of a Roblox private server for an experience by server name.      |
-| `RobloxServerUtils.GeneratePrivateServerLinkAsync(...)`   | Regenerates the invite link of a Roblox private server for an experience by server name.    |
-| `RobloxPlayerUtils.JoinAccountsAsync(...)`                | Authenticates and launches multiple Roblox accounts into an experience.                     |
-| `MessageBoxUtils.Show(...)`                               | Displays a native Windows message box synchronously.                                        |
-| `MessageBoxUtils.ShowAsync(...)`                          | Displays a native Windows message box asynchronously.                                       |
+| API                                                      | Description                                                                                 |
+| :------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `WindowUtils.ForceFocusWindow(...)`                      | Forces the target application window to the foreground and brings it into focus.            |
+| `SystemUtils.InitiateSystemShutdown(...)`                | Requests a system shutdown with a specified timeout and display message.                    |
+| `SystemUtils.AbortSystemShutdown(...)`                   | Aborts a previously scheduled system shutdown request.                                      |
+| `SystemUtils.IsInRole(...)`                              | Gets whether the current process is running under the specified built-in Windows role.      |
+| `SystemUtils.GetRoles(...)`                              | Gets all built-in Windows roles that the current process is running under.                  |
+| `SystemUtils.GetSystemMetric(...)`                       | Retrieves a system metric or configuration setting.                                         |
+| `NetworkUtils.SetRadioStateAsync(...)`                   | Requests a change to the operational state of a specified radio kind.                       |
+| `NetworkUtils.GetRadioStateAsync(...)`                   | Gets the current operational state of a specified radio kind.                               |
+| `IpUtils.GetIpInfoAsync(...)`                            | Retrieves information for a specified internet protocol address.                            |
+| `BrowserUtils.GetCookieValue(...)`                       | Retrieves the decrypted value of a cookie stored in a browser.                              |
+| `RobloxServerUtils.GetAllPrivateServerDetailsAsync(...)` | Retrieves detailed information for all accessible Roblox private servers for an experience. |
+| `RobloxServerUtils.GetPrivateServerIdAsync(...)`         | Retrieves the ID of a Roblox private server for an experience by server name.               |
+| `RobloxServerUtils.GetPrivateServerAccessCodeAsync(...)` | Retrieves the access code of a Roblox private server for an experience by server name.      |
+| `RobloxServerUtils.GetPrivateServerJoinLinkAsync(...)`   | Retrieves the invite link of a Roblox private server for an experience by server name.      |
+| `RobloxServerUtils.GeneratePrivateServerLinkAsync(...)`  | Regenerates the invite link of a Roblox private server for an experience by server name.    |
+| `RobloxPlayerUtils.JoinAccountsAsync(...)`               | Authenticates and launches multiple Roblox accounts into an experience.                     |
+| `MessageBoxUtils.Show(...)`                              | Displays a native Windows message box synchronously.                                        |
+| `MessageBoxUtils.ShowAsync(...)`                         | Displays a native Windows message box asynchronously.                                       |
 
 </details>
 

@@ -129,4 +129,28 @@ public static class SystemUtils
 
         return roles;
     }
+
+    /// <summary>
+    /// Gets the specified system metric or configuration setting.
+    /// </summary>
+    /// <param name="metric">The system metric to retrieve.</param>
+    /// <returns>
+    /// The requested system metric or configuration setting. Dimensions are returned in pixels.
+    /// </returns>
+    public static int GetSystemMetric(SystemMetric metric)
+    {
+        return User32.GetSystemMetrics((int)metric);
+    }
+
+    /// <summary>
+    /// Gets whether the specified system metric is nonzero.
+    /// </summary>
+    /// <param name="metric">The system metric to retrieve.</param>
+    /// <returns>
+    /// <see langword="true"/> if the metric is nonzero; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static bool IsSystemMetricEnabled(SystemMetric metric)
+    {
+        return GetSystemMetric(metric) != 0;
+    }
 }

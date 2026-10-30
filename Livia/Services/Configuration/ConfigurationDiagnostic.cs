@@ -1,17 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Livia.Services.Configuration;
 
-/// <summary>Identifies the severity of a configuration diagnostic.</summary>
-public enum ConfigurationDiagnosticSeverity
-{
-    /// <summary>Informational message.</summary>
-    Info,
-    /// <summary>Recoverable issue; loading may continue.</summary>
-    Warning,
-    /// <summary>Error affecting a value or the complete document.</summary>
-    Error
-}
-
 /// <summary>Describes a configuration loading or validation issue.</summary>
+[Experimental("LIVIA002")]
 public sealed class ConfigurationDiagnostic
 {
     /// <summary>Gets the diagnostic severity.</summary>

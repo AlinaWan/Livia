@@ -1,10 +1,12 @@
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Livia.Services.Configuration;
 
 /// <summary>Loads, validates, saves, and optionally watches schema-defined JSON configuration files.</summary>
+[Experimental("LIVIA002")]
 public sealed class ConfigurationManager : IDisposable
 {
     private readonly ConfigurationSchema _schema;

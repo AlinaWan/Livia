@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Livia.Services.Configuration;
 
 /// <summary>Evaluates a restricted arithmetic expression language without executing arbitrary code.</summary>
+[Experimental("LIVIA002")]
 public sealed class ConfigurationExpressionEvaluator
 {
     private readonly IReadOnlyDictionary<string, double> _variables;

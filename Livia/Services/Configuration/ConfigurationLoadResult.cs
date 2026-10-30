@@ -1,6 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Livia.Services.Configuration;
 
 /// <summary>Contains the result of a configuration load operation.</summary>
+[Experimental("LIVIA002")]
 public sealed class ConfigurationLoadResult
 {
     /// <summary>Gets whether a document was produced. Field-level errors may still be present.</summary>

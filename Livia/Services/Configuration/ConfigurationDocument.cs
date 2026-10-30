@@ -1,9 +1,11 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Livia.Services.Configuration;
 
 /// <summary>Represents a JSON configuration document.</summary>
+[Experimental("LIVIA002")]
 public sealed class ConfigurationDocument
 {
     private readonly JsonObject _root;

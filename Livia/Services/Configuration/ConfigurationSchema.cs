@@ -1,10 +1,12 @@
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Livia.Services.Configuration;
 
 /// <summary>Defines the fields and defaults accepted by a configuration document.</summary>
+[Experimental("LIVIA002")]
 public sealed class ConfigurationSchema
 {
     private readonly List<ConfigurationField> _fields = [];

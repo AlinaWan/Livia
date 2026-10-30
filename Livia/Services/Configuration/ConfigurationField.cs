@@ -1,8 +1,10 @@
 using System.Text.Json.Nodes;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Livia.Services.Configuration;
 
 /// <summary>Describes one field in a runtime configuration schema.</summary>
+[Experimental("LIVIA002")]
 public sealed class ConfigurationField
 {
     private readonly List<ConfigurationField> _children = [];

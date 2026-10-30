@@ -121,6 +121,8 @@ See [Livia Guides](GUIDES.md) for practical examples demonstrating how Livia's A
 <details>
   <summary>Click to expand</summary>
 
+> **Warning**: Configuration Service is currently for evaluation purposes only and is subject to change or removal in future updates.
+
 | API                                | Description                                                                                                                      |
 | :--------------------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
 | `ConfigurationManager`             | Loads, validates, saves, and watches schema-defined JSON configuration files.                                                    |

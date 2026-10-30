@@ -1,6 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Livia.Services.Configuration;
 
 /// <summary>Controls configuration loading, expression evaluation, and live reload behavior.</summary>
+[Experimental("LIVIA002")]
 public sealed class ConfigurationLoadOptions
 {
     /// <summary>Gets or sets whether fields marked as expression-capable may evaluate numeric strings. Defaults to false.</summary>

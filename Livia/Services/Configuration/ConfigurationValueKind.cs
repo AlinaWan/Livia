@@ -1,6 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Livia.Services.Configuration;
 
 /// <summary>Describes the expected JSON value type for a configuration field.</summary>
+[Experimental("LIVIA002")]
 public enum ConfigurationValueKind
 {
     /// <summary>Any JSON value type.</summary>

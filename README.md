@@ -2,6 +2,13 @@
   <h1>Livia</h1>
   <p><b>A New Frontier in Macro Development</b></p>
 
+</div>
+
+> [!CAUTION]
+> The only official Livia packages are [`Livia` on NuGet](https://www.nuget.org/packages/Livia) and [`livia-python` on PyPi](https://pypi.org/project/livia-python/). Any other packages or websites offering downloads or claiming to be us are not owned by us.
+
+<div align="center">
+
 [![License](https://img.shields.io/github/license/AlinaWan/Livia)](LICENSE)
 [![C#](https://custom-icon-badges.demolab.com/badge/C%23-%23239120.svg?logo=cshrp&logoColor=white)](#)
 [![C++](https://img.shields.io/badge/C++-%2300599C.svg?logo=c%2B%2B&logoColor=white)](#)
@@ -188,6 +195,9 @@ dotnet run --project Apps/<Experience>/<Macro>
 
 ## FAQ
 
+<details>
+  <summary>Click to expand</summary>
+
 ### What is Livia?
 
 Livia is an open-source C# library for building Roblox automation macros and Windows applications. It provides reusable services, UI components, system utilities, input simulation, screen capture, Roblox utilities, and other Windows-specific functionality.
@@ -235,6 +245,8 @@ No. Livia currently relies on Windows-specific technologies such as WPF, Win32 A
 ### Can I use Livia commercially?
 
 Yes, subject to the terms of the MIT license. See the repository's license for the complete terms.
+
+</details>
 
 ## Troubleshooting
 

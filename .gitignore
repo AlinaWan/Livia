@@ -99,6 +99,7 @@ CHANGELOG.md
 Python/test_api.py
 Python/livia/_version.py
 Python/livia/runtimeconfig.json
+Python/livia/Livia.deps.json
 Python/livia/Livia.dll
 Python/livia/Native/
 

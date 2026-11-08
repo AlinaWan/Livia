@@ -24,7 +24,12 @@ version = { attr = "livia._version.__version__" }
 [tool.setuptools.package-data]
 livia = [
     "Livia.dll",
+    "Livia.deps.json",
     "runtimeconfig.json",
+    "_version.py",
+    "Microsoft.Windows.SDK.NET.dll",
+    "WinRT.Runtime.dll",
+    "Livia.Native.DxgiFrameCapture.dll",
     "Native/ScreenCapture/Livia.Native.DxgiFrameCapture.dll",
 ]
 
